@@ -17,7 +17,7 @@ export default function Home() {
 
             <Box
                 sx={{
-                    backgroundImage: `url("@/static/img/predigrowee-start-page.png")`,
+                    backgroundImage: `url("src/static/img/predigrowee-start-page.png")`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     minHeight: '100vh',

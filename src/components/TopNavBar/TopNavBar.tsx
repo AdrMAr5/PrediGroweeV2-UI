@@ -5,7 +5,7 @@ import React from "react";
 export default function TopNavBar(){
     const theme = useTheme();
     return (
-        <AppBar position="static" color={theme.palette.grey.A100} elevation={0}>
+        <AppBar position="static" color="transparent" elevation={0}>
             <Toolbar>
                 <IconButton href="/">
                     <PrediGroweeIcon width="36px"/>
