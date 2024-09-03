@@ -1,14 +1,14 @@
 import React from 'react';
 import {
   Box,
+  Button,
   Card,
   CardContent,
-  TextField,
-  Button,
+  CardHeader,
   Checkbox,
   FormControlLabel,
   Link,
-  CardHeader,
+  TextField,
 } from '@mui/material';
 import AuthPagesLayout from '../components/layouts/AuthPagesLayout';
 import UsersClient from '@/apiClients/UsersClient';
@@ -27,7 +27,7 @@ export default function Register() {
             sx={{ mt: 1 }}
             onSubmit={(event) => {
               event.preventDefault();
-              // const email = event.target.email.value;
+              // const email = event.target.email.value;O
               // const password = event.target.password.value;
               // const retypePassword = event.target.retypePassword.value;
               // console.log(email, password, retypePassword);
