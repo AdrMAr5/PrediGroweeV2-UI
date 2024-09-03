@@ -1,19 +1,22 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import TopNavBar from "@/components/TopNavBar/TopNavBar";
+import TopNavBar from '@/components/TopNavBar/TopNavBar';
 
 interface LayoutProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
-const AuthPagesLayout = ({children}: LayoutProps) => (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <TopNavBar/>
-        <Box component="main" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', p: 3 }}>
-            {children}
-        </Box>
+const AuthPagesLayout = ({ children }: LayoutProps) => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <TopNavBar />
+    <Box
+      component="main"
+      sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', p: 3 }}
+    >
+      {children}
     </Box>
+  </Box>
 );
 
 export default AuthPagesLayout;
