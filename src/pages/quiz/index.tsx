@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Card,
   CardContent,
   Typography,
@@ -17,9 +16,10 @@ import {
   FormControl,
   FormLabel,
   Stack,
+  Button,
 } from '@mui/material';
 import Image from 'next/image';
-// import axios from 'axios';
+import axios from 'axios';
 
 const measurementData = [
   { parameter: 'SN/MP (32°)', age9: 25.0, age12: 22.7 },
@@ -40,14 +40,23 @@ const measurementData = [
 
 const QuizPage = () => {
   const [growthDirection, setGrowthDirection] = useState('');
-  // React.useEffect(() => {
-  //   const res = axios
-  //     .get('http://localhost:8082/question/1', { withCredentials: true })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  //   console.log(res);
-  // }, []);
+  const [currentQuestion, setCurrentQuestion] = useState(1);
+  const handleClickNext = () => {
+    if (growthDirection === '') {
+      alert('Please select a growth direction');
+      return;
+    }
+    setCurrentQuestion((prev) => prev + 1);
+    setGrowthDirection('');
+  };
+  React.useEffect(() => {
+    const res = axios
+      .get('http://localhost:8082/question/' + currentQuestion, { withCredentials: true })
+      .catch((e) => {
+        console.log(e);
+      });
+    console.log(res);
+  }, [currentQuestion]);
 
   return (
     <Card sx={{ margin: 'auto', mt: 4 }}>
@@ -58,7 +67,7 @@ const QuizPage = () => {
         <Typography variant="subtitle1" gutterBottom align="center">
           male
         </Typography>
-        <Stack direction="row" columnGap={2} flexWrap="nowrap">
+        <Stack direction="row" columnGap={2} flexWrap="nowrap" mb={2}>
           <Image src="" alt="Patient at 9" width={500} height={500} />
           <TableContainer component={Paper} sx={{ minWidth: '280px' }}>
             <Table size="small">
@@ -98,7 +107,7 @@ const QuizPage = () => {
         {/*  </Box>*/}
         {/*</Box>*/}
 
-        <Box mt={4}>
+        <Stack direction="column" mt={4} maxWidth="1000px" marginX="auto">
           <FormControl component="fieldset">
             <FormLabel component="legend">
               Please try to predict the direction of facial growth at the age of 17
@@ -122,7 +131,8 @@ const QuizPage = () => {
               <FormControlLabel value="mixed" control={<Radio />} label="mixed" />
             </RadioGroup>
           </FormControl>
-        </Box>
+          <Button onClick={handleClickNext}>Next</Button>
+        </Stack>
       </CardContent>
     </Card>
   );
