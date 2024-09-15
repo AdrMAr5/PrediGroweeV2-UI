@@ -1,8 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Container, Box, IconButton } from '@mui/material';
-import Link from 'next/link';
+import { Typography, Button, Container, Box } from '@mui/material';
 import Head from 'next/head';
-import PrediGroweeIcon from '@/static/icons/PrediGroweeIcon';
 import '@/static/img/predigrowee-start-page.png';
 import TopNavBar from '@/components/TopNavBar/TopNavBar';
 
