@@ -14,7 +14,7 @@ import AuthPagesLayout from '../../components/layouts/AuthPagesLayout';
 import LoginValidate from '@/pages/login/validate';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
-import { RegisterFormValues } from '@/pages/register';
+import Image from 'next/image';
 
 type LoginFormValues = {
   email: string;
@@ -33,6 +33,7 @@ export default function Index() {
     setSubmitting(true);
     try {
       await axios.post('http://localhost:8080/login', values, { withCredentials: true });
+      window.location.href = '/quiz';
     } catch (error) {
       console.log(error);
     } finally {
@@ -98,7 +99,7 @@ export default function Index() {
             <Button
               fullWidth
               variant="outlined"
-              startIcon={<img src="/google-icon.png" alt="Google" width={20} height={20} />}
+              startIcon={<Image src="" alt="Google" width={20} height={20} />}
               sx={{ mt: 2, mb: 2 }}
             >
               Log in with Google
@@ -108,7 +109,7 @@ export default function Index() {
                 Register
               </Link>
               <br />
-              <Link href="/confirm-account" variant="body2">
+              <Link href="/" variant="body2">
                 Confirm account
               </Link>
             </Box>
