@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../theme';
+import { AuthContextProvider } from '@/components/contexts/AuthContext';
 
 export default function MyApp(props: { Component: any; pageProps: any }) {
   const { Component, pageProps } = props;
@@ -24,7 +25,9 @@ export default function MyApp(props: { Component: any; pageProps: any }) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        <AuthContextProvider>
+          <Component {...pageProps} />
+        </AuthContextProvider>
       </ThemeProvider>
     </React.Fragment>
   );
