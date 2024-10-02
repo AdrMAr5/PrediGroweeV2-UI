@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import TopNavBar from '@/components/TopNavBar/TopNavBar';
+import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 
 interface LayoutProps {
   children: React.ReactNode;

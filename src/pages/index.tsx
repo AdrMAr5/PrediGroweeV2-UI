@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Button, Container, Box } from '@mui/material';
 import Head from 'next/head';
 import '@/static/img/predigrowee-start-page.png';
-import TopNavBar from '@/components/TopNavBar/TopNavBar';
+import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 
 export default function Home() {
   return (
