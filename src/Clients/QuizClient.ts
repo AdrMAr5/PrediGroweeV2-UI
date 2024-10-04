@@ -1,17 +1,11 @@
-import axios, { AxiosInstance } from 'axios';
+import BaseClient from '@/Clients/BaseClient';
 
-class QuizClient {
-  private axiosInstance: AxiosInstance;
-
+class QuizClient extends BaseClient {
   constructor(baseUrl: string) {
-    this.axiosInstance = axios.create({
-      baseURL: baseUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    super(baseUrl);
     this.axiosInstance.interceptors.request.use((config) => {
       const token = sessionStorage.getItem('access_token');
+      console.log('token', token);
       if (token) {
         config.headers['Authorization'] = token;
       }

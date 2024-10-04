@@ -14,7 +14,6 @@ import {
 import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import { LoadingButton } from '@mui/lab';
-import axios from 'axios';
 import * as Yup from 'yup';
 import { QUIZ_SERVICE_URL } from '@/Envs';
 import QuizClient from '@/Clients/QuizClient';
@@ -52,12 +51,8 @@ export default function StartQuiz() {
   ) => {
     setSubmitting(true);
     try {
-      const response = await axios.post('http://localhost/quiz/new', values, {
-        withCredentials: true,
-      });
-      const quizSessionId = response.data?.session?.ID;
-      localStorage.setItem('quizSessionId', quizSessionId);
-      router.push('/quiz');
+      const data = await quizClient.startQuiz(values.mode);
+      await router.push('/quiz/[sessionId]', `/quiz/${data.session.ID}`);
     } catch (error) {
       console.error(error);
       // Handle error (e.g., show error message to user)

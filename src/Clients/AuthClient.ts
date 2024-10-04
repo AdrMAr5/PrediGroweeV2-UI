@@ -1,37 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
+import BaseClient from '@/Clients/BaseClient';
 
-class AuthClient {
-  private axiosInstance: AxiosInstance;
+class AuthClient extends BaseClient {
   constructor(baseUrl: string) {
-    this.axiosInstance = axios.create({
-      baseURL: baseUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          try {
-            const response = await this.refreshToken();
-            const { accessToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-
-            this.axiosInstance.defaults.headers.common['Authorization'] = accessToken;
-            return this.axiosInstance(originalRequest);
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-            localStorage.removeItem('accessToken');
-            window.location.href = '/login';
-            return Promise.reject(refreshError);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
+    super(baseUrl);
   }
   async register(email: string, password: string) {
     try {
@@ -63,9 +34,6 @@ class AuthClient {
     } catch (err) {
       throw new Error("Couldn't logout: " + err);
     }
-  }
-  async refreshToken() {
-    return this.axiosInstance.post('/refresh', {}, { withCredentials: true });
   }
 }
 export default AuthClient;
