@@ -7,7 +7,11 @@ class AuthClient extends BaseClient {
   async register(email: string, password: string) {
     try {
       console.log('registering...');
-      const res = await this.axiosInstance.post('/register', { email, password });
+      const res = await this.axiosInstance.post(
+        '/register',
+        { email, password },
+        { withCredentials: true }
+      );
       sessionStorage.setItem('access_token', res.data.access_token);
       return res.data;
     } catch (err) {
@@ -16,7 +20,11 @@ class AuthClient extends BaseClient {
   }
   async login(email: string, password: string) {
     try {
-      const res = await this.axiosInstance.post('/login', { email, password });
+      const res = await this.axiosInstance.post(
+        '/login',
+        { email, password },
+        { withCredentials: true }
+      );
       sessionStorage.setItem('access_token', res.data.access_token);
       return res.data;
     } catch (err) {

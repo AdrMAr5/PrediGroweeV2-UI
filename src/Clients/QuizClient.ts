@@ -5,13 +5,11 @@ class QuizClient extends BaseClient {
     super(baseUrl);
     this.axiosInstance.interceptors.request.use((config) => {
       const token = sessionStorage.getItem('access_token');
-      console.log('token', token);
       if (token) {
         config.headers['Authorization'] = token;
       }
       return config;
     });
-    this.axiosInstance.interceptors.response.use();
   }
   async getUserQuizSessions() {
     try {
@@ -29,23 +27,35 @@ class QuizClient extends BaseClient {
       throw new Error("Couldn't start quiz: " + err);
     }
   }
-  async getQuestion(sessionId: number, questionId: number) {
+  async getQuestion(sessionId: string, questionId: number) {
     try {
-      const res = await this.axiosInstance.get(`/${sessionId}/questions/${questionId}`);
+      const res = await this.axiosInstance.get(`/${sessionId}/question/${questionId}`);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get question: " + err);
     }
   }
-  async submitAnswer(id: number, answer: string) {
+  async getNextQuestion(sessionId: string) {
     try {
-      const res = await this.axiosInstance.post(`/questions/${id}/submit`, { answer });
+      const res = await this.axiosInstance.get(`/${sessionId}/nextQuestion`);
+      if (res.status === 204) {
+        return null;
+      }
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't get next question" + err);
+    }
+  }
+
+  async submitAnswer(sessionId: string, answer: string) {
+    try {
+      const res = await this.axiosInstance.post(`${sessionId}/answer`, { answer });
       return res.data;
     } catch (err) {
       throw new Error("Couldn't submit answer: " + err);
     }
   }
-  async finishQuiz(sessionId: number) {
+  async finishQuiz(sessionId: string) {
     try {
       const res = await this.axiosInstance.post(`${sessionId}/finish`);
       return res.data;

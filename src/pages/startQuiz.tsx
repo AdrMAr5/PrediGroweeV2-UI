@@ -15,8 +15,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { QUIZ_SERVICE_URL } from '@/Envs';
-import QuizClient from '@/Clients/QuizClient';
+import { useQuizContext } from '@/components/contexts/QuizContext';
 
 type QuizFormValues = {
   mode: 'educational' | 'timeLimited' | 'classic';
@@ -33,12 +32,13 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function StartQuiz() {
-  const quizClient = new QuizClient(QUIZ_SERVICE_URL);
+  const { quizClient, setSessionId } = useQuizContext();
   const router = useRouter();
   React.useEffect(() => {
     const getSessions = async () => {
       try {
-        console.log(await quizClient.getUserQuizSessions());
+        const data = await quizClient.getUserQuizSessions();
+        setSessionId(data.sessions[0].ID);
       } catch (error) {
         console.error(error);
       }
