@@ -14,7 +14,7 @@ import { LoadingButton } from '@mui/lab';
 import AuthPagesLayout from '../../components/layouts/AuthPagesLayout';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import RegisterValidate from './validate';
-import axios from 'axios';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 export type RegisterFormValues = {
   email: string;
@@ -30,15 +30,17 @@ const initialValues: RegisterFormValues = {
 };
 
 export default function Register() {
+  const { register } = useAuthContext();
   const handleSubmit = async (
     values: RegisterFormValues,
     { setSubmitting }: FormikHelpers<RegisterFormValues>
   ) => {
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:8080/register', values, { withCredentials: true });
+      register(values.email, values.password);
+      location.href = '/confirm';
     } catch (error) {
-      console.log(error);
+      alert(error);
     } finally {
       setSubmitting(false);
     }

@@ -10,11 +10,11 @@ import {
   CardHeader,
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
-import AuthPagesLayout from '../../components/layouts/AuthPagesLayout';
+import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import LoginValidate from '@/pages/login/validate';
 import { LoadingButton } from '@mui/lab';
-import axios from 'axios';
 import Image from 'next/image';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 type LoginFormValues = {
   email: string;
@@ -26,14 +26,15 @@ const initialValues: LoginFormValues = {
 };
 
 export default function Index() {
+  const { login } = useAuthContext();
   const handleSubmit = async (
     values: LoginFormValues,
     { setSubmitting }: FormikHelpers<LoginFormValues>
   ) => {
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:8080/login', values, { withCredentials: true });
-      window.location.href = '/quiz';
+      await login(values.email, values.password);
+      window.location.href = '/startQuiz';
     } catch (error) {
       console.log(error);
     } finally {

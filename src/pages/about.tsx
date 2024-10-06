@@ -1,4 +1,4 @@
-import TopNavBar from '@/components/TopNavBar/TopNavBar';
+import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import React from 'react';
 
 export default function About() {

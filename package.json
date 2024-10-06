@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "format": "eslint --fix --ext .js,.ts,.tsx",
+    "prettier": "prettier --write .",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
