@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
 
 type Role = 'admin' | 'user';
+type UserRoutes = 'startQuiz' | 'quiz/[sessionId]' | 'quiz/[sessionId]/results' | '/account';
+type AdminRoutes = '/admin';
 
 type UserData = {
   email: string | null;
@@ -11,62 +13,78 @@ type UserData = {
 
 export type AuthContextType = {
   userData: UserData;
-  register: (email: string, password: string) => void;
-  login: (email: string, password: string) => void;
-  logout: () => void;
+  register: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 };
-const AuthContext = React.createContext<AuthContextType>({
-  userData: { email: null, role: null },
-  register: () => {},
-  login: () => {},
-  logout: () => {},
-});
 
-const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const authClient = new AuthClient(AUTH_SERVICE_URL);
-  const [userData, setUserData] = React.useState<UserData>({
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [userData, setUserData] = useState<UserData>({
     email: null,
     role: null,
   });
-  const register = async (email: string, password: string) => {
-    try {
-      const data = await authClient.register(email, password);
-      if (data.access_token && data.role) {
-        setUserData({ email: email, role: data.role });
+
+  const authClient = useMemo(() => new AuthClient(AUTH_SERVICE_URL), []);
+
+  const register = useCallback(
+    async (email: string, password: string) => {
+      try {
+        const data = await authClient.register(email, password);
+        if (data.access_token && data.role) {
+          setUserData({ email: email, role: data.role });
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
       }
-    } catch (error) {
-      alert(error);
-    }
-  };
-  const login = async (email: string, password: string) => {
-    try {
-      const data = await authClient.login(email, password);
-      if (data.access_token && data.role) {
-        setUserData({ email: email, role: data.role });
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
-  const logout = async () => {
-    await authClient.logout();
-    setUserData({ email: null, role: null });
-  };
-  return (
-    <AuthContext.Provider
-      value={{ userData: userData, register: register, login: login, logout: logout }}
-    >
-      {children}
-    </AuthContext.Provider>
+    },
+    [authClient]
   );
+
+  const login = useCallback(
+    async (email: string, password: string) => {
+      try {
+        const data = await authClient.login(email, password);
+        if (data.access_token) {
+          setUserData({ email: email, role: data.role });
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+    },
+    [authClient]
+  );
+
+  const logout = useCallback(async () => {
+    try {
+      await authClient.logout();
+      setUserData({ email: null, role: null });
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+  }, [authClient]);
+
+  const value = useMemo(
+    () => ({
+      userData,
+      register,
+      login,
+      logout,
+    }),
+    [userData, register, login, logout]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-const useAuthContext = () => {
-  const context = React.useContext(AuthContext);
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuthContext must be used within an AuthContextProvider');
   }
   return context;
 };
-
-export { AuthContextProvider, useAuthContext };

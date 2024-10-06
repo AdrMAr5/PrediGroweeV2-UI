@@ -44,7 +44,7 @@ export default function StartQuiz() {
       }
     };
     getSessions();
-  }, []);
+  }, [quizClient, setSessionId]);
   const handleSubmit = async (
     values: QuizFormValues,
     { setSubmitting }: FormikHelpers<QuizFormValues>

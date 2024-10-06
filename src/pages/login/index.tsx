@@ -11,10 +11,11 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
-import LoginValidate from '@/pages/login/validate';
+import LoginValidate from '@/components/LoginValidate';
 import { LoadingButton } from '@mui/lab';
 import Image from 'next/image';
 import { useAuthContext } from '@/components/contexts/AuthContext';
+import { useRouter } from 'next/router';
 
 type LoginFormValues = {
   email: string;
@@ -26,6 +27,7 @@ const initialValues: LoginFormValues = {
 };
 
 export default function Index() {
+  const router = useRouter();
   const { login } = useAuthContext();
   const handleSubmit = async (
     values: LoginFormValues,
@@ -34,7 +36,7 @@ export default function Index() {
     setSubmitting(true);
     try {
       await login(values.email, values.password);
-      window.location.href = '/startQuiz';
+      await router.push('/startQuiz');
     } catch (error) {
       console.log(error);
     } finally {

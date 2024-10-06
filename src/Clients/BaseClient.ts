@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import useRouterPush from '@/components/hooks/useRouterPush';
 
 class BaseClient {
   protected axiosInstance: AxiosInstance;
@@ -35,7 +36,7 @@ class BaseClient {
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
             localStorage.removeItem('access_token');
-            window.location.href = '/login';
+            await useRouterPush('/login');
             return Promise.reject(refreshError);
           }
         }

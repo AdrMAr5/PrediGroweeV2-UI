@@ -21,8 +21,8 @@ export default function ConfirmAccount() {
         />
         <CardContent>
           <Typography variant="body2" align="center" sx={{ mb: 2 }}>
-            If You haven't received an email with the confirmation link, or your link has expired,
-            You can use the form below to get a new email from us.
+            If You haven`&apos;`t received an email with the confirmation link, or your link has
+            expired, You can use the form below to get a new email from us.
           </Typography>
           <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
@@ -33,7 +33,6 @@ export default function ConfirmAccount() {
               label="Email"
               name="email"
               autoComplete="email"
-              autoFocus
             />
             <Button
               type="submit"
