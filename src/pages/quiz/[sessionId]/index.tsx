@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -49,8 +49,8 @@ type QuestionData = {
 
 const QuizPage = () => {
   const [growthDirection, setGrowthDirection] = React.useState('');
+  // @ts-expect-error omit check for test
   const [questionData, setQuestionData] = React.useState<QuestionData>(null);
-  const [questionLoading, setQuestionLoading] = React.useState(true);
   const { quizClient } = useQuizContext();
   const router = useRouter();
   const sessionId = router.query.sessionId as string;
@@ -106,11 +106,9 @@ const QuizPage = () => {
         console.error(error);
       }
     };
-    getQuestion2().then((r) => console.log('fetched'));
-    setQuestionLoading(false);
-    console.log('effect');
-  }, []);
-  if (questionLoading || !questionData) {
+    getQuestion2();
+  }, [quizClient, sessionId]);
+  if (!questionData) {
     return <Typography>Loading...</Typography>;
   }
 
