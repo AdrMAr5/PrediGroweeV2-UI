@@ -1,7 +1,5 @@
-// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import axios from 'axios';
 
 export async function middleware(request: NextRequest) {
   const sessionId = request.cookies.get('session_id')?.value;
@@ -15,13 +13,35 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
+
   if (adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))) {
-    // todo: call the auth service to get the user role
-    const res = await axios.get('http://localhost');
-    if (res.data.role !== 'admin') {
+    if (!sessionId) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+      const response = await fetch('http://localhost:80/auth/verifySession', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: `session_id=${sessionId}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to verify session');
+      }
+      const data = await response.json();
+      console.log(data);
+
+      if (data.role !== 'admin') {
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+    } catch (err) {
+      console.error(err);
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
+
   return NextResponse.next();
 }
 
