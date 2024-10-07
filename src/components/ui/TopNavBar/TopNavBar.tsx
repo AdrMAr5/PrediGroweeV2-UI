@@ -1,10 +1,23 @@
-import { AppBar, Box, Button, IconButton, Toolbar, useTheme } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
+import Link from 'next/link';
 import PrediGroweeIcon from '@/static/icons/PrediGroweeIcon';
 import React from 'react';
 import { useAuthContext } from '@/components/contexts/AuthContext';
 
 export default function TopNavBar() {
-  const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { userData } = useAuthContext();
+  console.log(userData);
+  const isAdmin = userData.role === 'admin';
+
   return (
     <AppBar position="static" color="transparent" elevation={5}>
       <Toolbar>
@@ -39,6 +52,17 @@ export default function TopNavBar() {
         >
           Account
         </Button>
+        <Menu
+          id="account-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>Statistics</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
