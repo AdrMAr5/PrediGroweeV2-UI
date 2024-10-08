@@ -3,8 +3,10 @@ import Link from 'next/link';
 import PrediGroweeIcon from '@/static/icons/PrediGroweeIcon';
 import React from 'react';
 import { useAuthContext } from '@/components/contexts/AuthContext';
+import { useRouter } from 'next/router';
 
 export default function TopNavBar() {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,9 +61,23 @@ export default function TopNavBar() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Statistics</MenuItem>
+          <MenuItem
+            onClick={async () => {
+              handleClose();
+              await router.push('/statistics');
+            }}
+          >
+            Statistics
+          </MenuItem>
           <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem
+            onClick={async () => {
+              handleClose();
+              await router.push('/statistics');
+            }}
+          >
+            Logout
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
