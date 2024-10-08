@@ -12,13 +12,6 @@ const quizPaths = ['/startQuiz', '/quiz/[sessionId]'];
 
 export default function MyApp({ Component, pageProps, router }: AppProps) {
   const isQuizPage = quizPaths.some((path) => router.pathname === path);
-  React.useEffect(() => {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles) {
-      jssStyles?.parentElement?.removeChild(jssStyles);
-    }
-  }, []);
 
   return (
     <React.Fragment>

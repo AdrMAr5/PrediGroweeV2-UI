@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { AUTH_SERVICE_URL } from '@/Envs';
 
 export async function middleware(request: NextRequest) {
   const sessionId = request.cookies.get('session_id')?.value;
@@ -20,7 +21,7 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      const response = await fetch('http://localhost:80/auth/verifySession', {
+      const response = await fetch(AUTH_SERVICE_URL + '/verifySession', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import { AUTH_SERVICE_URL } from '@/Envs';
 type Role = 'admin' | 'user';
 
 type UserData = {
-  email: string | null;
+  userId: string | null;
   role: Role | null;
 };
 
@@ -16,7 +16,7 @@ export type AuthContextType = {
   logout: () => void;
 };
 const AuthContext = React.createContext<AuthContextType>({
-  userData: { email: null, role: null },
+  userData: { userId: null, role: null },
   register: () => {},
   login: () => {},
   logout: () => {},
@@ -25,14 +25,32 @@ const AuthContext = React.createContext<AuthContextType>({
 const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const authClient = new AuthClient(AUTH_SERVICE_URL);
   const [userData, setUserData] = React.useState<UserData>({
-    email: null,
+    userId: null,
     role: null,
   });
+
+  React.useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const data = await authClient.checkSession();
+        console.log('data', data);
+        if (data.user_id && data.role) {
+          setUserData({ userId: data.user_id, role: data.role });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    checkSession();
+  }, []);
+
   const register = async (email: string, password: string) => {
     try {
       const data = await authClient.register(email, password);
-      if (data.access_token && data.role) {
-        setUserData({ email: email, role: data.role });
+      if (data.access_token && data.user.role) {
+        setUserData({ userId: data.user_id, role: data.role });
+      } else {
+        throw new Error('Failed to register');
       }
     } catch (error) {
       alert(error);
@@ -42,7 +60,9 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const data = await authClient.login(email, password);
       if (data.access_token && data.role) {
-        setUserData({ email: email, role: data.role });
+        setUserData({ userId: data.user_id, role: data.role });
+      } else {
+        throw new Error('Failed to login');
       }
     } catch (error) {
       alert(error);
@@ -50,7 +70,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const logout = async () => {
     await authClient.logout();
-    setUserData({ email: null, role: null });
+    setUserData({ userId: null, role: null });
   };
   return (
     <AuthContext.Provider

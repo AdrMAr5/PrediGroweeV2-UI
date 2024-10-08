@@ -43,5 +43,16 @@ class AuthClient extends BaseClient {
       throw new Error("Couldn't logout: " + err);
     }
   }
+
+  async checkSession() {
+    try {
+      const res = await this.axiosInstance.get('/verifySession', {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't check session: " + err);
+    }
+  }
 }
 export default AuthClient;
