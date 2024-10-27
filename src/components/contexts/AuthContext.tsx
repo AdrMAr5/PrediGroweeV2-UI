@@ -11,12 +11,16 @@ type UserData = {
 
 export type AuthContextType = {
   userData: UserData;
+  isLoggedIn: boolean;
+  authClient: AuthClient;
   register: (email: string, password: string) => void;
   login: (email: string, password: string) => void;
   logout: () => void;
 };
 const AuthContext = React.createContext<AuthContextType>({
   userData: { userId: null, role: null },
+  isLoggedIn: false,
+  authClient: new AuthClient(AUTH_SERVICE_URL),
   register: () => {},
   login: () => {},
   logout: () => {},
@@ -34,8 +38,8 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const data = await authClient.checkSession();
         console.log('data', data);
-        if (data.user_id && data.role) {
-          setUserData({ userId: data.user_id, role: data.role });
+        if (data.userId && data.role) {
+          setUserData({ userId: data.userId, role: data.role });
         }
       } catch (error) {
         console.error(error);
@@ -47,8 +51,8 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const register = async (email: string, password: string) => {
     try {
       const data = await authClient.register(email, password);
-      if (data.access_token && data.user.role) {
-        setUserData({ userId: data.user_id, role: data.role });
+      if (data.accessToken && data.user.role) {
+        setUserData({ userId: data.userId, role: data.role });
       } else {
         throw new Error('Failed to register');
       }
@@ -59,8 +63,8 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       const data = await authClient.login(email, password);
-      if (data.access_token && data.role) {
-        setUserData({ userId: data.user_id, role: data.role });
+      if (data.accessToken && data.role) {
+        setUserData({ userId: data.userId, role: data.role });
       } else {
         throw new Error('Failed to login');
       }
@@ -74,7 +78,14 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   };
   return (
     <AuthContext.Provider
-      value={{ userData: userData, register: register, login: login, logout: logout }}
+      value={{
+        userData,
+        isLoggedIn: userData.userId !== null && userData.role !== null,
+        authClient,
+        register,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

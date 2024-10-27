@@ -1,5 +1,4 @@
 import React from 'react';
-import { useRouter } from 'next/router';
 import {
   Box,
   Card,
@@ -16,9 +15,10 @@ import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
 import { useQuizContext } from '@/components/contexts/QuizContext';
+import { QuizMode, QUIZ_MODES } from '@/pages/quiz/_components/types';
 
 type QuizFormValues = {
-  mode: 'educational' | 'timeLimited' | 'classic';
+  mode: QuizMode;
 };
 
 const initialValues: QuizFormValues = {
@@ -26,14 +26,16 @@ const initialValues: QuizFormValues = {
 };
 
 const validationSchema = Yup.object().shape({
-  mode: Yup.string()
-    .oneOf(['educational', 'limited_time', 'classic'])
-    .required('Please select a quiz mode'),
+  mode: Yup.string().oneOf(QUIZ_MODES, 'Invalid quiz mode').required('Please select a quiz mode'),
 });
 
-export default function StartQuiz() {
+export default function StartQuiz({
+  nextStep,
+}: {
+  nextStep: (sessionId: string, mode: QuizMode) => void;
+}) {
   const { quizClient, setSessionId } = useQuizContext();
-  const router = useRouter();
+
   React.useEffect(() => {
     const getSessions = async () => {
       try {
@@ -52,7 +54,7 @@ export default function StartQuiz() {
     setSubmitting(true);
     try {
       const data = await quizClient.startQuiz(values.mode);
-      await router.push('/quiz/[sessionId]', `/quiz/${data.session.ID}`);
+      nextStep(data.session.sessionId, data.session.quizMode);
     } catch (error) {
       console.error(error);
       // Handle error (e.g., show error message to user)

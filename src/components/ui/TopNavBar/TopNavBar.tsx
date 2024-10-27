@@ -16,12 +16,12 @@ export default function TopNavBar() {
     setAnchorEl(null);
   };
 
-  const { userData } = useAuthContext();
+  const { userData, logout, isLoggedIn } = useAuthContext();
   console.log(userData);
   const isAdmin = userData.role === 'admin';
 
   return (
-    <AppBar position="static" color="transparent" elevation={5}>
+    <AppBar position="static" elevation={5} color="transparent">
       <Toolbar>
         <Link href="/">
           <IconButton>
@@ -32,7 +32,7 @@ export default function TopNavBar() {
         <Link href="/about">
           <Button color="inherit">About</Button>
         </Link>
-        <Link href="/login">
+        <Link href={isLoggedIn ? '/quiz' : '/login'}>
           <Button color="inherit">Get Started</Button>
         </Link>
         <Link href="/contact">
@@ -62,6 +62,7 @@ export default function TopNavBar() {
           onClose={handleClose}
         >
           <MenuItem
+            disabled={!isLoggedIn}
             onClick={async () => {
               handleClose();
               await router.push('/statistics');
@@ -69,11 +70,21 @@ export default function TopNavBar() {
           >
             Statistics
           </MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
           <MenuItem
+            disabled={!isLoggedIn}
             onClick={async () => {
               handleClose();
-              await router.push('/statistics');
+              await router.push('/account');
+            }}
+          >
+            My account
+          </MenuItem>
+          <MenuItem
+            disabled={!isLoggedIn}
+            onClick={async () => {
+              handleClose();
+              logout();
+              await router.push('/');
             }}
           >
             Logout

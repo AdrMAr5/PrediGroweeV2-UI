@@ -8,7 +8,7 @@ import { AuthContextProvider } from '@/components/contexts/AuthContext';
 import { QuizContextProvider } from '@/components/contexts/QuizContext';
 import { AppProps } from 'next/app';
 
-const quizPaths = ['/startQuiz', '/quiz/[sessionId]'];
+const quizPaths = ['/quiz', '/quiz/[sessionId]'];
 
 export default function MyApp({ Component, pageProps, router }: AppProps) {
   const isQuizPage = quizPaths.some((path) => router.pathname === path);

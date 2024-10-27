@@ -12,7 +12,7 @@ class AuthClient extends BaseClient {
         { email, password },
         { withCredentials: true }
       );
-      sessionStorage.setItem('access_token', res.data.access_token);
+      sessionStorage.setItem('accessToken', res.data.accessToken);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't register: " + err);
@@ -25,7 +25,7 @@ class AuthClient extends BaseClient {
         { email, password },
         { withCredentials: true }
       );
-      sessionStorage.setItem('access_token', res.data.access_token);
+      sessionStorage.setItem('accessToken', res.data.accessToken);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't login: " + err);
@@ -36,9 +36,12 @@ class AuthClient extends BaseClient {
       await this.axiosInstance.post(
         '/logout',
         {},
-        { headers: { Authorization: sessionStorage.getItem('access_token') } }
+        {
+          headers: { Authorization: sessionStorage.getItem('accessToken') },
+          withCredentials: true,
+        }
       );
-      sessionStorage.removeItem('access_token');
+      sessionStorage.removeItem('accessToken');
     } catch (err) {
       throw new Error("Couldn't logout: " + err);
     }
@@ -52,6 +55,26 @@ class AuthClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't check session: " + err);
+    }
+  }
+  async getUser(id: string) {
+    try {
+      const res = await this.axiosInstance.get('/users/' + id, {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't get user: " + err);
+    }
+  }
+  async updateUser(id: string | null, data: any) {
+    try {
+      const res = await this.axiosInstance.put('/users/' + id, data, {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't update user: " + err);
     }
   }
 }

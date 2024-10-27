@@ -1,18 +1,20 @@
 import axios, { AxiosInstance } from 'axios';
 import useRouterPush from '@/components/useRouterPush';
+import applyCaseMiddleware from 'axios-case-converter';
 
 class BaseClient {
   protected axiosInstance: AxiosInstance;
   constructor(baseUrl: string) {
-    this.axiosInstance = axios.create({
-      baseURL: baseUrl,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // withCredentials: true,
-    });
+    this.axiosInstance = applyCaseMiddleware(
+      axios.create({
+        baseURL: baseUrl,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    );
     this.axiosInstance.interceptors.request.use((config) => {
-      const token = sessionStorage.getItem('access_token');
+      const token = sessionStorage.getItem('accessToken');
       if (token) {
         config.headers['Authorization'] = token;
       }
@@ -30,12 +32,13 @@ class BaseClient {
               {},
               { withCredentials: true }
             );
+            console.log('Token refreshed:', response.data);
             const { access_token } = response.data;
-            sessionStorage.setItem('access_token', access_token);
+            sessionStorage.setItem('accessToken', access_token);
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
-            localStorage.removeItem('access_token');
+            localStorage.removeItem('accessToken');
             await useRouterPush('/login');
             return Promise.reject(refreshError);
           }
