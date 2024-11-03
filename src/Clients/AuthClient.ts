@@ -1,4 +1,5 @@
 import BaseClient from '@/Clients/BaseClient';
+import { UserData } from '@/types';
 
 class AuthClient extends BaseClient {
   constructor(baseUrl: string) {
@@ -67,7 +68,7 @@ class AuthClient extends BaseClient {
       throw new Error("Couldn't get user: " + err);
     }
   }
-  async updateUser(id: string | null, data: any) {
+  async updateUser(id: string | null, data: UserData) {
     try {
       const res = await this.axiosInstance.put('/users/' + id, data, {
         withCredentials: true,

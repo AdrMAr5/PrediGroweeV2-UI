@@ -17,14 +17,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useAuthContext } from '@/components/contexts/AuthContext';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
-
-type UserData = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-};
+import { UserData } from '@/types';
 
 const AccountPage = () => {
   const {
@@ -62,7 +55,7 @@ const AccountPage = () => {
       }
     };
     getAccountData();
-  }, [userId]);
+  }, [authClient, userId]);
 
   const handleEdit = () => {
     setIsEditing(true);

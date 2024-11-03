@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -35,7 +35,7 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
   const [results, setResults] = useState<QuizResults | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const statsClient = new StatsClient(STATS_SERVICE_URL);
+  const statsClient = useMemo(() => new StatsClient(STATS_SERVICE_URL), []);
 
   React.useEffect(() => {
     const fetchResults = async () => {
@@ -49,7 +49,7 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
       }
     };
     fetchResults();
-  }, [sessionId]);
+  }, [sessionId, statsClient]);
 
   if (loading) {
     return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -47,15 +47,15 @@ const QuizPage = ({
   const theme = useTheme();
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
   console.log(questionData);
-  const finishQuizSession = async () => {
+  const finishQuizSession = useCallback(async () => {
     try {
       await quizClient.finishQuiz(sessionId);
       nextStep();
     } catch (error) {
       console.error(error);
     }
-  };
-  const getQuestion = async () => {
+  }, [quizClient, sessionId, nextStep]);
+  const getQuestion = useCallback(async () => {
     try {
       const data = await quizClient.getNextQuestion(sessionId);
       if (!data) {
@@ -65,7 +65,7 @@ const QuizPage = ({
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [quizClient, sessionId, finishQuizSession]);
   const handleClickNext = async () => {
     if (growthDirection === '' && mode !== 'educational') {
       alert('Please select a growth direction');
@@ -97,7 +97,7 @@ const QuizPage = ({
     getQuestion();
     setQuestionLoading(false);
     console.log('effect');
-  }, []);
+  }, [getQuestion]);
 
   if (questionLoading || !questionData) {
     return <Typography>Loading...</Typography>;

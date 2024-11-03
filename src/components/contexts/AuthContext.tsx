@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
 
@@ -27,7 +27,7 @@ const AuthContext = React.createContext<AuthContextType>({
 });
 
 const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const authClient = new AuthClient(AUTH_SERVICE_URL);
+  const authClient = useMemo(() => new AuthClient(AUTH_SERVICE_URL), []);
   const [userData, setUserData] = React.useState<UserData>({
     userId: null,
     role: null,
@@ -46,7 +46,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     checkSession();
-  }, []);
+  }, [authClient]);
 
   const register = async (email: string, password: string) => {
     try {

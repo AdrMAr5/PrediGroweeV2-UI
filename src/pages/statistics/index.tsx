@@ -2,7 +2,7 @@ import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import StatsClient from '@/Clients/StatsClient';
 import { STATS_SERVICE_URL } from '@/Envs';
-import React from 'react';
+import React, { useMemo } from 'react';
 type QuizModes = 'educational' | 'time_limited' | 'classic';
 type UserStats = {
   accuracy: Record<QuizModes, number>;
@@ -11,7 +11,7 @@ type UserStats = {
 };
 
 const AdminPage = () => {
-  const statsClient = new StatsClient(STATS_SERVICE_URL);
+  const statsClient = useMemo(() => new StatsClient(STATS_SERVICE_URL), []);
   const [stats, setStats] = React.useState<UserStats | null>(null);
   React.useEffect(() => {
     const fetchStats = async () => {
@@ -23,7 +23,7 @@ const AdminPage = () => {
       }
     };
     fetchStats();
-  }, []);
+  }, [statsClient]);
   return (
     <Box>
       <TopNavBar />
