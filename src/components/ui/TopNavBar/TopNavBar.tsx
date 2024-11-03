@@ -1,12 +1,27 @@
-import { AppBar, Box, Button, IconButton, Toolbar, useTheme } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
+import Link from 'next/link';
 import PrediGroweeIcon from '@/static/icons/PrediGroweeIcon';
 import React from 'react';
 import { useAuthContext } from '@/components/contexts/AuthContext';
+import { useRouter } from 'next/router';
 
 export default function TopNavBar() {
-  const theme = useTheme();
+  const router = useRouter();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { userData, logout, isLoggedIn } = useAuthContext();
+  console.log(userData);
+  const isAdmin = userData.role === 'admin';
+
   return (
-    <AppBar position="static" color="transparent" elevation={5}>
+    <AppBar position="static" elevation={5} style={{ background: '#f5f5f5' }}>
       <Toolbar>
         <Link href="/">
           <IconButton>
@@ -17,7 +32,7 @@ export default function TopNavBar() {
         <Link href="/about">
           <Button color="inherit">About</Button>
         </Link>
-        <Link href="/login">
+        <Link href={isLoggedIn ? '/quiz' : '/login'}>
           <Button color="inherit">Get Started</Button>
         </Link>
         <Link href="/contact">
@@ -32,13 +47,49 @@ export default function TopNavBar() {
           </Link>
         )}
         <Button
-          color="inherit"
+          color="primary"
           onClick={handleClick}
           aria-controls="account-menu"
           aria-haspopup="true"
         >
           Account
         </Button>
+        <Menu
+          id="account-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem
+            disabled={!isLoggedIn}
+            onClick={async () => {
+              handleClose();
+              await router.push('/statistics');
+            }}
+          >
+            Statistics
+          </MenuItem>
+          <MenuItem
+            disabled={!isLoggedIn}
+            onClick={async () => {
+              handleClose();
+              await router.push('/account');
+            }}
+          >
+            My account
+          </MenuItem>
+          <MenuItem
+            disabled={!isLoggedIn}
+            onClick={async () => {
+              handleClose();
+              logout();
+              await router.push('/');
+            }}
+          >
+            Logout
+          </MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

@@ -4,7 +4,7 @@ class QuizClient extends BaseClient {
   constructor(baseUrl: string) {
     super(baseUrl);
     this.axiosInstance.interceptors.request.use((config) => {
-      const token = sessionStorage.getItem('access_token');
+      const token = sessionStorage.getItem('accessToken');
       if (token) {
         config.headers['Authorization'] = token;
       }

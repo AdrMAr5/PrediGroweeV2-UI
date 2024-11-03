@@ -36,7 +36,7 @@ export default function Index() {
     setSubmitting(true);
     try {
       await login(values.email, values.password);
-      await router.push('/startQuiz');
+      await router.push('/quiz');
     } catch (error) {
       console.log(error);
     } finally {

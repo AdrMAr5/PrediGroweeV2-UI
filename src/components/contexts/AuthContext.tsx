@@ -1,90 +1,102 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
 
 type Role = 'admin' | 'user';
-type UserRoutes = 'startQuiz' | 'quiz/[sessionId]' | 'quiz/[sessionId]/results' | '/account';
-type AdminRoutes = '/admin';
 
 type UserData = {
-  email: string | null;
+  userId: string | null;
   role: Role | null;
 };
 
 export type AuthContextType = {
   userData: UserData;
-  register: (email: string, password: string) => Promise<void>;
+  isLoggedIn: boolean;
+  authClient: AuthClient;
+  register: (email: string, password: string) => void;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
 };
+const AuthContext = React.createContext<AuthContextType>({
+  userData: { userId: null, role: null },
+  isLoggedIn: false,
+  authClient: new AuthClient(AUTH_SERVICE_URL),
+  register: () => {},
+  login: () => new Promise(() => {}),
+  logout: () => {},
+});
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [userData, setUserData] = useState<UserData>({
-    email: null,
+const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const authClient = useMemo(() => new AuthClient(AUTH_SERVICE_URL), []);
+  const [userData, setUserData] = React.useState<UserData>({
+    userId: null,
     role: null,
   });
 
-  const authClient = useMemo(() => new AuthClient(AUTH_SERVICE_URL), []);
-
-  const register = useCallback(
-    async (email: string, password: string) => {
+  React.useEffect(() => {
+    const checkSession = async () => {
       try {
-        const data = await authClient.register(email, password);
-        if (data.access_token && data.role) {
-          setUserData({ email: email, role: data.role });
+        const data = await authClient.checkSession();
+        if (data.userId && data.role) {
+          setUserData({ userId: data.userId, role: data.role });
         }
       } catch (error) {
-        console.error('Registration error:', error);
-        throw error;
+        console.error(error);
       }
-    },
-    [authClient]
-  );
-
-  const login = useCallback(
-    async (email: string, password: string) => {
-      try {
-        const data = await authClient.login(email, password);
-        if (data.access_token) {
-          setUserData({ email: email, role: data.role });
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        throw error;
-      }
-    },
-    [authClient]
-  );
-
-  const logout = useCallback(async () => {
-    try {
-      await authClient.logout();
-      setUserData({ email: null, role: null });
-    } catch (error) {
-      console.error('Logout error:', error);
-      throw error;
-    }
+    };
+    checkSession();
   }, [authClient]);
 
-  const value = useMemo(
-    () => ({
-      userData,
-      register,
-      login,
-      logout,
-    }),
-    [userData, register, login, logout]
+  const register = async (email: string, password: string) => {
+    try {
+      const data = await authClient.register(email, password);
+      if (data.accessToken && data.user.role) {
+        setUserData({ userId: data.userId, role: data.role });
+      } else {
+        throw new Error('Failed to register');
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+  const login = async (email: string, password: string) => {
+    try {
+      const data = await authClient.login(email, password);
+      if (data.accessToken && data.role) {
+        setUserData({ userId: data.userId, role: data.role });
+      } else {
+        throw new Error('Failed to login');
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+  const logout = async () => {
+    await authClient.logout();
+    setUserData({ userId: null, role: null });
+  };
+  return (
+    <AuthContext.Provider
+      value={{
+        userData,
+        isLoggedIn: userData.userId !== null && userData.role !== null,
+        authClient,
+        register,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
+const useAuthContext = () => {
+  const context = React.useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuthContext must be used within an AuthContextProvider');
   }
   return context;
 };
+
+export { AuthContextProvider, useAuthContext };
