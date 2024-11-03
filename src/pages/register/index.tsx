@@ -13,8 +13,9 @@ import {
 import { LoadingButton } from '@mui/lab';
 import AuthPagesLayout from '../../components/layouts/AuthPagesLayout';
 import { Formik, Form, Field, FormikHelpers } from 'formik';
-import RegisterValidate from './validate';
+import RegisterValidate from '../../components/RegisterValidate';
 import { useAuthContext } from '@/components/contexts/AuthContext';
+import { useRouter } from 'next/router';
 
 export type RegisterFormValues = {
   email: string;
@@ -30,6 +31,7 @@ const initialValues: RegisterFormValues = {
 };
 
 export default function Register() {
+  const router = useRouter();
   const { register } = useAuthContext();
   const handleSubmit = async (
     values: RegisterFormValues,
@@ -38,7 +40,7 @@ export default function Register() {
     setSubmitting(true);
     try {
       register(values.email, values.password);
-      location.href = '/confirm';
+      await router.push('/confirm');
     } catch (error) {
       alert(error);
     } finally {
