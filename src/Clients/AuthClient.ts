@@ -60,9 +60,7 @@ class AuthClient extends BaseClient {
   }
   async getUser(id: string) {
     try {
-      const res = await this.axiosInstance.get('/users/' + id, {
-        withCredentials: true,
-      });
+      const res = await this.axiosInstance.get('/users/' + id);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get user: " + err);
