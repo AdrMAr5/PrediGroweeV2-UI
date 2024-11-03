@@ -21,7 +21,7 @@ export default function TopNavBar() {
   const isAdmin = userData.role === 'admin';
 
   return (
-    <AppBar position="static" elevation={5} color="transparent">
+    <AppBar position="static" elevation={5} style={{ background: '#f5f5f5' }}>
       <Toolbar>
         <Link href="/">
           <IconButton>
@@ -47,7 +47,7 @@ export default function TopNavBar() {
           </Link>
         )}
         <Button
-          color="inherit"
+          color="primary"
           onClick={handleClick}
           aria-controls="account-menu"
           aria-haspopup="true"

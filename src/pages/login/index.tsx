@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
-import LoginValidate from '@/pages/login/validate';
+import LoginValidate from '@/components/LoginValidate';
 import { LoadingButton } from '@mui/lab';
 import Image from 'next/image';
 import { useAuthContext } from '@/components/contexts/AuthContext';

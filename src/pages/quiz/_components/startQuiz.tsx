@@ -15,7 +15,7 @@ import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
 import { useQuizContext } from '@/components/contexts/QuizContext';
-import { QuizMode, QUIZ_MODES } from '@/pages/quiz/_components/types';
+import { QuizMode, QUIZ_MODES } from '@/types';
 
 type QuizFormValues = {
   mode: QuizMode;

@@ -14,7 +14,7 @@ export type AuthContextType = {
   isLoggedIn: boolean;
   authClient: AuthClient;
   register: (email: string, password: string) => void;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 const AuthContext = React.createContext<AuthContextType>({
@@ -22,7 +22,7 @@ const AuthContext = React.createContext<AuthContextType>({
   isLoggedIn: false,
   authClient: new AuthClient(AUTH_SERVICE_URL),
   register: () => {},
-  login: () => {},
+  login: () => new Promise(() => {}),
   logout: () => {},
 });
 
@@ -37,7 +37,6 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     const checkSession = async () => {
       try {
         const data = await authClient.checkSession();
-        console.log('data', data);
         if (data.userId && data.role) {
           setUserData({ userId: data.userId, role: data.role });
         }

@@ -27,7 +27,7 @@ import xray1 from '../../../../public/xray1.jpg';
 import xray2 from '../../../../public/xray2.jpg';
 import { useMediaQuery } from '@mui/system';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import { QuestionData, QuizMode } from './types';
+import { QuestionData, QuizMode } from '@/types';
 
 const QuizPage = ({
   nextStep,
@@ -181,7 +181,7 @@ const QuizPage = ({
                 }
               }}
             >
-              {questionData.options.map((option) => {
+              {questionData.options?.map((option) => {
                 return showCorrect ? (
                   <FormControlLabel
                     key={option}

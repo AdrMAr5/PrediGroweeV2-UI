@@ -2,7 +2,7 @@ import React from 'react';
 import QuizPage from './_components/QuizPage';
 import StartQuiz from './_components/startQuiz';
 import QuizResultsPage from './_components/results';
-import { QuizState } from './_components/types';
+import { QuizState } from '@/types';
 
 const QuizIndexPage = () => {
   const [quizState, setQuizState] = React.useState<QuizState>({
