@@ -76,5 +76,21 @@ class AuthClient extends BaseClient {
       throw new Error("Couldn't update user: " + err);
     }
   }
+
+  async loginWithGoogle(access_token: string) {
+    console.log('logging in with google...');
+    console.log(access_token);
+    try {
+      const res = await this.axiosInstance.post(
+        '/login/google',
+        { access_token },
+        { withCredentials: true }
+      );
+      sessionStorage.setItem('accessToken', res.data.accessToken);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't login with Google: " + err);
+    }
+  }
 }
 export default AuthClient;
