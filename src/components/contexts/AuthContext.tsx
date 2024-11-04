@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 type Role = 'admin' | 'user';
 
@@ -13,17 +14,19 @@ export type AuthContextType = {
   userData: UserData;
   isLoggedIn: boolean;
   authClient: AuthClient;
-  register: (email: string, password: string) => void;
+  register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  loginWithGoogle: (access_token: string) => Promise<void>;
+  logout: () => Promise<void>;
 };
 const AuthContext = React.createContext<AuthContextType>({
   userData: { userId: null, role: null },
   isLoggedIn: false,
   authClient: new AuthClient(AUTH_SERVICE_URL),
-  register: () => {},
+  register: () => new Promise(() => {}),
   login: () => new Promise(() => {}),
-  logout: () => {},
+  loginWithGoogle: () => new Promise(() => {}),
+  logout: () => new Promise(() => {}),
 });
 
 const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -71,23 +74,38 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
       alert(error);
     }
   };
+  const loginWithGoogle = async (access_token: string) => {
+    try {
+      const data = await authClient.loginWithGoogle(access_token);
+      if (data.accessToken && data.role) {
+        setUserData({ userId: data.userId, role: data.role as Role });
+      } else {
+        throw new Error('Failed to login with Google');
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
   const logout = async () => {
     await authClient.logout();
     setUserData({ userId: null, role: null });
   };
   return (
-    <AuthContext.Provider
-      value={{
-        userData,
-        isLoggedIn: userData.userId !== null && userData.role !== null,
-        authClient,
-        register,
-        login,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <AuthContext.Provider
+        value={{
+          userData,
+          isLoggedIn: userData.userId !== null && userData.role !== null,
+          authClient,
+          register,
+          login,
+          loginWithGoogle,
+          logout,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    </GoogleOAuthProvider>
   );
 };
 
