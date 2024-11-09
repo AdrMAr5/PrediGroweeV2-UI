@@ -1,0 +1,57 @@
+import React from 'react';
+import { Box, Button, IconButton } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { StaticImageData } from 'next/image';
+import Image from 'next/image';
+import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+
+type InfoTipProps = {
+  title: string;
+  description: string;
+  contentImage: StaticImageData | null;
+};
+
+const InfoTip = ({ title, description, contentImage }: InfoTipProps) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <IconButton
+        onClick={() => {
+          setOpen(!open);
+        }}
+        sx={{ height: '32px', width: '32px' }}
+      >
+        <InfoIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Typography>{description}</Typography>
+            {contentImage && (
+              <Image
+                src={contentImage}
+                alt={title}
+                style={{ maxWidth: '100%', maxHeight: '100%' }}
+              />
+            )}
+          </Box>
+          <Button
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            Close
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export default InfoTip;

@@ -22,7 +22,7 @@ type QuizFormValues = {
 };
 
 const initialValues: QuizFormValues = {
-  mode: 'educational',
+  mode: 'classic',
 };
 
 const validationSchema = Yup.object().shape({
@@ -44,9 +44,8 @@ export default function StartQuiz({
     try {
       const data = await quizClient.startQuiz(values.mode, window.innerWidth, window.innerHeight);
       nextStep(data.session.sessionId, data.session.quizMode);
-    } catch (error) {
-      console.error(error);
-      // Handle error (e.g., show error message to user)
+    } catch {
+      alert('Failed to start quiz');
     } finally {
       setSubmitting(false);
     }
@@ -73,25 +72,27 @@ export default function StartQuiz({
                       value={values.mode}
                       onChange={handleChange}
                     >
+                      <FormControlLabel value="classic" control={<Radio />} label="Classic" />
                       <FormControlLabel
                         value="educational"
                         control={<Radio />}
                         label="Educational"
+                        disabled
                       />
                       <FormControlLabel
                         value="timeLimited"
                         control={<Radio />}
                         label="Time Limited"
+                        disabled
                       />
-                      <FormControlLabel value="classic" control={<Radio />} label="Classic" />
                     </RadioGroup>
                   </FormControl>
                   <LoadingButton
                     type="submit"
+                    variant="contained"
                     loading={isSubmitting}
                     fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2, bgcolor: '#a5b4fc', '&:hover': { bgcolor: '#8c9eff' } }}
+                    sx={{ mt: 3, mb: 2 }}
                   >
                     Start Quiz
                   </LoadingButton>

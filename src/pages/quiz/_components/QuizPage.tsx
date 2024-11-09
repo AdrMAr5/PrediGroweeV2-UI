@@ -26,6 +26,23 @@ import { useQuizContext } from '@/components/contexts/QuizContext';
 import { useMediaQuery } from '@mui/system';
 import { QuestionData, QuizMode } from '@/types';
 import axios from 'axios';
+import {
+  p14,
+  p15,
+  p16,
+  p17,
+  p18,
+  p19,
+  p20,
+  p21,
+  p22,
+  p23,
+  p24,
+  p25,
+  p26,
+  p27,
+} from '@/static/parametersImages';
+import InfoTip from './InfoTip';
 
 const QuizPage = ({
   nextStep,
@@ -47,6 +64,41 @@ const QuizPage = ({
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
   const notMedium = useMediaQuery(theme.breakpoints.down('md'));
   const [imageSrc, setImageSrc] = React.useState<Record<string, string>>({ '1': '', '2': '' });
+
+  const renderTooltip = (id: number) => {
+    switch (id) {
+      case 14:
+        return p14;
+      case 15:
+        return p15;
+      case 16:
+        return p16;
+      case 17:
+        return p17;
+      case 18:
+        return p18;
+      case 19:
+        return p19;
+      case 20:
+        return p20;
+      case 21:
+        return p21;
+      case 22:
+        return p22;
+      case 23:
+        return p23;
+      case 24:
+        return p24;
+      case 25:
+        return p25;
+      case 26:
+        return p26;
+      case 27:
+        return p27;
+      default:
+        return null;
+    }
+  };
 
   const finishQuizSession = useCallback(async () => {
     try {
@@ -147,6 +199,13 @@ const QuizPage = ({
               </TableCell>
               <TableCell component="th" scope="row" align="center">
                 {param.name}
+                {param?.id <= 27 && (
+                  <InfoTip
+                    title={param.name}
+                    description={param.description}
+                    contentImage={renderTooltip(param.id)}
+                  />
+                )}
               </TableCell>
               <TableCell align="right">
                 {questionData.case.parametersValues[index].value2}
