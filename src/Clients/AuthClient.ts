@@ -28,7 +28,7 @@ class AuthClient extends BaseClient {
       );
       sessionStorage.setItem('accessToken', res.data.accessToken);
       return res.data;
-    } catch (err) {
+    } catch {
       throw new Error("Couldn't login");
     }
   }

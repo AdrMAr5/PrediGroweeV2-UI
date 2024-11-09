@@ -43,7 +43,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
         if (data?.userId && data?.role) {
           setUserData({ userId: data.userId, role: data.role });
         }
-      } catch (error) {
+      } catch {
         console.log('Failed to check session:');
       }
     };
@@ -80,7 +80,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData({ userId: null, role: null });
   };
   return (
-    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+    <GoogleOAuthProvider clientId="711820824033-s1vvhg02269re31p02bs3snvk3lsnl3a.apps.googleusercontent.com">
       <AuthContext.Provider
         value={{
           userData,
