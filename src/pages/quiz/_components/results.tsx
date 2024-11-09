@@ -13,22 +13,22 @@ import {
   Stack,
   Button,
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import StatsClient from '@/Clients/StatsClient';
 import { STATS_SERVICE_URL } from '@/Envs';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
+import QuizResultGridItem from '@/pages/quiz/_components/QuizResultGridItem';
 
+export type QuestionResult = {
+  questionID: string;
+  answer: string;
+  isCorrect: boolean;
+};
 type QuizResults = {
   mode: string;
   correctAnswers: number;
   totalQuestions: number;
   accuracy: number;
-  questions: {
-    questionID: string;
-    answer: string;
-    isCorrect: boolean;
-  }[];
+  questions: QuestionResult[];
 };
 
 const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: () => void }) => {
@@ -144,40 +144,11 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
               <CardContent>
                 <Grid2 container spacing={2}>
                   {results.questions?.map((question, index) => (
-                    <Grid2 size={12} key={question.questionID}>
-                      <Paper
-                        elevation={0}
-                        sx={{
-                          p: 2,
-                          bgcolor: question.isCorrect ? 'success.light' : 'error.light',
-                          '&:hover': {
-                            bgcolor: question.isCorrect ? 'success.200' : 'error.200',
-                          },
-                        }}
-                      >
-                        <Box display="flex" justifyContent="space-between" alignItems="center">
-                          <Box display="flex" alignItems="center" gap={2}>
-                            <Typography color="text.secondary">Question {index + 1}</Typography>
-                            <Typography fontWeight="medium">
-                              Your answer: {question.answer}
-                            </Typography>
-                          </Box>
-                          <Box display="flex" alignItems="center" gap={1}>
-                            {question.isCorrect ? (
-                              <>
-                                <CheckCircleIcon color="success" />
-                                <Typography color="success.main">Correct</Typography>
-                              </>
-                            ) : (
-                              <>
-                                <CancelIcon color="error" />
-                                <Typography color="error.main">Incorrect</Typography>
-                              </>
-                            )}
-                          </Box>
-                        </Box>
-                      </Paper>
-                    </Grid2>
+                    <QuizResultGridItem
+                      key={question.questionID}
+                      question={question}
+                      index={index}
+                    />
                   ))}
                 </Grid2>
               </CardContent>

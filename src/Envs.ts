@@ -1,3 +1,10 @@
-export const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL ?? 'http://localhost:80/auth';
-export const QUIZ_SERVICE_URL = process.env.QUIZ_SERVICE_URL ?? 'http://localhost:80/quiz';
-export const STATS_SERVICE_URL = process.env.STATS_SERVICE_URL ?? 'http://localhost:80/stats';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
+
+export const AUTH_SERVICE_URL =
+  publicRuntimeConfig.AUTH_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/auth';
+export const QUIZ_SERVICE_URL =
+  publicRuntimeConfig.QUIZ_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/quiz';
+export const STATS_SERVICE_URL =
+  publicRuntimeConfig.STATS_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/stats';

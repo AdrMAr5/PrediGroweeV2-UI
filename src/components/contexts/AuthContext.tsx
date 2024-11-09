@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 type Role = 'admin' | 'user';
 
@@ -13,17 +14,19 @@ export type AuthContextType = {
   userData: UserData;
   isLoggedIn: boolean;
   authClient: AuthClient;
-  register: (email: string, password: string) => void;
+  register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  loginWithGoogle: (access_token: string) => Promise<boolean>;
+  logout: () => Promise<void>;
 };
 const AuthContext = React.createContext<AuthContextType>({
   userData: { userId: null, role: null },
   isLoggedIn: false,
   authClient: new AuthClient(AUTH_SERVICE_URL),
-  register: () => {},
+  register: () => new Promise(() => {}),
   login: () => new Promise(() => {}),
-  logout: () => {},
+  loginWithGoogle: () => new Promise(() => false),
+  logout: () => new Promise(() => {}),
 });
 
 const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,38 +40,39 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     const checkSession = async () => {
       try {
         const data = await authClient.checkSession();
-        if (data.userId && data.role) {
+        if (data?.userId && data?.role) {
           setUserData({ userId: data.userId, role: data.role });
         }
       } catch (error) {
-        console.error(error);
+        console.log('Failed to check session:');
       }
     };
     checkSession();
   }, [authClient]);
 
   const register = async (email: string, password: string) => {
-    try {
-      const data = await authClient.register(email, password);
-      if (data.accessToken && data.user.role) {
-        setUserData({ userId: data.userId, role: data.role });
-      } else {
-        throw new Error('Failed to register');
-      }
-    } catch (error) {
-      alert(error);
+    const data = await authClient.register(email, password);
+    if (data?.accessToken && data?.user.role) {
+      setUserData({ userId: data.userId, role: data.role });
+    } else {
+      throw new Error('Failed to register');
     }
   };
   const login = async (email: string, password: string) => {
-    try {
-      const data = await authClient.login(email, password);
-      if (data.accessToken && data.role) {
-        setUserData({ userId: data.userId, role: data.role });
-      } else {
-        throw new Error('Failed to login');
-      }
-    } catch (error) {
-      alert(error);
+    const data = await authClient.login(email, password);
+    if (data?.accessToken && data?.role) {
+      setUserData({ userId: data.userId, role: data.role });
+    } else {
+      throw new Error('Failed to login');
+    }
+  };
+  const loginWithGoogle = async (access_token: string) => {
+    const data = await authClient.loginWithGoogle(access_token);
+    if (data?.accessToken && data?.role) {
+      setUserData({ userId: data.userId, role: data.role as Role });
+      return !!data?.firstLogin;
+    } else {
+      throw new Error('Failed to login with Google');
     }
   };
   const logout = async () => {
@@ -76,18 +80,21 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData({ userId: null, role: null });
   };
   return (
-    <AuthContext.Provider
-      value={{
-        userData,
-        isLoggedIn: userData.userId !== null && userData.role !== null,
-        authClient,
-        register,
-        login,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <AuthContext.Provider
+        value={{
+          userData,
+          isLoggedIn: userData.userId !== null && userData.role !== null,
+          authClient,
+          register,
+          login,
+          loginWithGoogle,
+          logout,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    </GoogleOAuthProvider>
   );
 };
 

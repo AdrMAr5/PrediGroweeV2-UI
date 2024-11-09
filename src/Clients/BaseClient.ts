@@ -16,7 +16,7 @@ class BaseClient {
     this.axiosInstance.interceptors.request.use((config) => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
-        config.headers['Authorization'] = token;
+        config.headers['Authorization'] = 'Bearer ' + token;
       }
       return config;
     });
@@ -28,16 +28,16 @@ class BaseClient {
           originalRequest._retry = true;
           try {
             const response = await axios.post(
-              'http://localhost/auth/refresh',
+              'https://predigrowee.agh.edu.pl/api/auth/refresh',
               {},
               { withCredentials: true }
             );
-            console.log('Token refreshed:', response.data);
+
             const { access_token } = response.data;
             sessionStorage.setItem('accessToken', access_token);
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
+            console.log('Token refresh failed:');
             localStorage.removeItem('accessToken');
             await useRouterPush('/login');
             return Promise.reject(refreshError);

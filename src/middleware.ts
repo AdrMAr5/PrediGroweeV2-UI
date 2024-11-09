@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { AUTH_SERVICE_URL } from '@/Envs';
 
 const checkSession = async (sessionId: string, requestURL: string, adminRequired: boolean) => {
   try {
-    const response = await fetch(AUTH_SERVICE_URL + '/verifySession', {
+    const response = await fetch('https://predigrowee.agh.edu.pl/api/auth' + '/verifySession', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -15,7 +14,6 @@ const checkSession = async (sessionId: string, requestURL: string, adminRequired
       return NextResponse.redirect(new URL('/login', requestURL));
     }
     const data = await response.json();
-    console.log(data);
 
     if (adminRequired && data.role !== 'admin') {
       return NextResponse.redirect(new URL('/login', requestURL));

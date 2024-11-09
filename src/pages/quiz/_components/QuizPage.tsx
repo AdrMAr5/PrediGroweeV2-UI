@@ -20,14 +20,12 @@ import {
   CardHeader,
   useTheme,
   Grid2,
+  Box,
 } from '@mui/material';
 import { useQuizContext } from '@/components/contexts/QuizContext';
-import Image from 'next/image';
-import xray1 from '../../../../public/xray1.jpg';
-import xray2 from '../../../../public/xray2.jpg';
 import { useMediaQuery } from '@mui/system';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { QuestionData, QuizMode } from '@/types';
+import axios from 'axios';
 
 const QuizPage = ({
   nextStep,
@@ -43,10 +41,13 @@ const QuizPage = ({
   const [questionLoading, setQuestionLoading] = React.useState(true);
   const [showCorrect, setShowCorrect] = React.useState(false);
   const [correctAnswer, setCorrectAnswer] = React.useState<string>('');
+  const [imageNumber, setImageNumber] = React.useState<number>(0);
   const { quizClient } = useQuizContext();
   const theme = useTheme();
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
-  console.log(questionData);
+  const notMedium = useMediaQuery(theme.breakpoints.down('md'));
+  const [imageSrc, setImageSrc] = React.useState<Record<string, string>>({ '1': '', '2': '' });
+
   const finishQuizSession = useCallback(async () => {
     try {
       await quizClient.finishQuiz(sessionId);
@@ -86,7 +87,6 @@ const QuizPage = ({
     try {
       const data = await quizClient.submitAnswer(sessionId, growthDirection);
       setCorrectAnswer(data.correct);
-      console.log(data.correct);
     } catch (error) {
       console.error(error);
     }
@@ -94,17 +94,30 @@ const QuizPage = ({
   };
 
   React.useEffect(() => {
+    const fetchImage = async (path: string) => {
+      try {
+        const res = await axios.get('https://predigrowee.agh.edu.pl/api/images' + path, {
+          responseType: 'blob',
+          headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
+        });
+        const imageUrl = URL.createObjectURL(res.data);
+        setImageSrc((prev) => ({ ...prev, [path]: imageUrl }));
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getQuestion();
+    fetchImage('1');
+    fetchImage('2');
     setQuestionLoading(false);
-    console.log('effect');
   }, [getQuestion]);
 
   if (questionLoading || !questionData) {
     return <Typography>Loading...</Typography>;
   }
 
-  const renderImage = (src: StaticImport, alt: string) => (
-    <Image alt={alt} src={src} layout="intrinsic" style={{ maxWidth: '100%', height: 'auto' }} />
+  const renderImage = (path: string, alt: string) => (
+    <Box component="img" alt={alt} src={imageSrc[path]} maxWidth="100%" maxHeight="100%" />
   );
   const renderTable = () => (
     <TableContainer component={Paper}>
@@ -136,11 +149,46 @@ const QuizPage = ({
   );
 
   const renderContent = () => {
+    if (notMedium)
+      return (
+        <Grid2 container spacing={2} justifyContent="space-around">
+          {imageNumber == 0 ? (
+            <Grid2 size={12}>{renderImage('1', 'xray1')}</Grid2>
+          ) : (
+            <Grid2 size={12}>{renderImage('2', 'xray2')}</Grid2>
+          )}
+          <Grid2 size={12}>
+            <Stack direction="row" justifyContent="center">
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setImageNumber(0);
+                }}
+                disabled={imageNumber == 0}
+              >
+                Image 1
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setImageNumber(1);
+                }}
+                disabled={imageNumber == 1}
+              >
+                Image 2
+              </Button>
+            </Stack>
+          </Grid2>
+          <Grid2 size={12} maxWidth="700px">
+            {renderTable()}
+          </Grid2>
+        </Grid2>
+      );
     if (notLarge)
       return (
         <Grid2 container spacing={4} justifyContent="space-around">
-          <Grid2 size={6}>{renderImage(xray1, 'xray1')}</Grid2>
-          <Grid2 size={6}>{renderImage(xray2, 'xray2')}</Grid2>
+          <Grid2 size={6}>{renderImage('1', 'xray1')}</Grid2>
+          <Grid2 size={6}>{renderImage('2', 'xray2')}</Grid2>
           <Grid2 size={12} maxWidth="700px">
             {renderTable()}
           </Grid2>
@@ -148,17 +196,17 @@ const QuizPage = ({
       );
     return (
       <Grid2 container spacing={2} alignItems="center">
-        <Grid2 size={4}>{renderImage(xray1, 'xray1')}</Grid2>
+        <Grid2 size={4}>{renderImage('1', 'xray1')}</Grid2>
         <Grid2 size={4} maxWidth="700px">
           {renderTable()}
         </Grid2>
-        <Grid2 size={4}>{renderImage(xray2, 'xray2')}</Grid2>
+        <Grid2 size={4}>{renderImage('2', 'xray2')}</Grid2>
       </Grid2>
     );
   };
 
   return (
-    <Card sx={{ margin: { xs: 2, md: 4 } }}>
+    <Card sx={{ margin: { xs: 1, sm: 2, md: 3, lg: 4 } }}>
       <CardHeader
         title={`Patient ${questionData.case.code || 'Unknown'}`}
         subheader={`Gender: ${questionData.case.gender || 'Unknown'}`}
@@ -214,6 +262,7 @@ const QuizPage = ({
               Show Correct Answer
             </Button>
           )}
+          <Button onClick={finishQuizSession}>Finish</Button>
         </Stack>
       </CardContent>
     </Card>
