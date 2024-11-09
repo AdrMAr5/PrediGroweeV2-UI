@@ -19,7 +19,7 @@ import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import QuizResultGridItem from '@/pages/quiz/_components/QuizResultGridItem';
 
 export type QuestionResult = {
-  questionID: string;
+  questionId: string;
   answer: string;
   isCorrect: boolean;
 };
@@ -145,7 +145,7 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
                 <Grid2 container spacing={2}>
                   {results.questions?.map((question, index) => (
                     <QuizResultGridItem
-                      key={question.questionID}
+                      key={question.questionId}
                       question={question}
                       index={index}
                     />

@@ -94,23 +94,33 @@ const QuizPage = ({
   };
 
   React.useEffect(() => {
+    getQuestion();
+    setQuestionLoading(false);
+  }, [getQuestion]);
+  React.useEffect(() => {
     const fetchImage = async (path: string) => {
       try {
-        const res = await axios.get('https://predigrowee.agh.edu.pl/api/images' + path, {
-          responseType: 'blob',
-          headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
-        });
+        const res = await axios.get(
+          'https://predigrowee.agh.edu.pl/api/images/' +
+            questionData?.id.toString() +
+            '/image/' +
+            path,
+          {
+            responseType: 'blob',
+            headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
+          }
+        );
         const imageUrl = URL.createObjectURL(res.data);
         setImageSrc((prev) => ({ ...prev, [path]: imageUrl }));
       } catch (error) {
         console.error(error);
       }
     };
-    getQuestion();
-    fetchImage('1');
-    fetchImage('2');
-    setQuestionLoading(false);
-  }, [getQuestion]);
+    if (questionData) {
+      fetchImage('1');
+      fetchImage('2');
+    }
+  }, [questionData]);
 
   if (questionLoading || !questionData) {
     return <Typography>Loading...</Typography>;

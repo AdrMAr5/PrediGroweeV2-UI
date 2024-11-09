@@ -16,28 +16,26 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
     '2': '',
     '3': '',
   });
-  const renderAge = (path: string) => {
-    switch (path) {
-      case '1':
-        return <Typography>Age: 9</Typography>;
-      case '2':
-        return <Typography>Age: 12</Typography>;
-      case '3':
-        return <Typography>Age: 16</Typography>;
-      default:
-        return 'Unknown';
-    }
-  };
+  // const renderAge = (path: string) => {
+  //   switch (path) {
+  //     case '1':
+  //       return <Typography>Age: 9</Typography>;
+  //     case '2':
+  //       return <Typography>Age: 12</Typography>;
+  //     case '3':
+  //       return <Typography>Age: 16</Typography>;
+  //     default:
+  //       return 'Unknown';
+  //   }
+  // };
   const renderImage = (path: string, alt: string) => (
     <Box>
-      {renderAge(path)}
       <Box
         component="img"
         alt={alt}
         src={imageSrc[path]}
         sx={{
-          maxWidth: '100%',
-          maxHeight: '290px', // Adjust this value to control image height
+          maxWidth: '350px',
           width: 'auto',
           objectFit: 'contain',
         }}
@@ -47,22 +45,27 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
   React.useEffect(() => {
     const fetchImage = async (path: string) => {
       try {
-        const res = await axios.get('https://predigrowee.agh.edu.pl/api/images' + path, {
-          responseType: 'blob',
-          headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
-        });
+        const res = await axios.get(
+          'https://predigrowee.agh.edu.pl/api/images/' + question?.questionId + '/image/' + path,
+          {
+            responseType: 'blob',
+            headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
+          }
+        );
         const imageUrl = URL.createObjectURL(res.data);
         setImageSrc((prev) => ({ ...prev, [path]: imageUrl }));
       } catch (error) {
         console.error(error);
       }
     };
-    fetchImage('1');
-    fetchImage('2');
-    fetchImage('3');
-  }, []);
+    if (question) {
+      fetchImage('1');
+      fetchImage('2');
+      fetchImage('3');
+    }
+  }, [question]);
   return (
-    <Grid2 size={12} key={question?.questionID}>
+    <Grid2 size={12} key={question?.questionId}>
       <Paper
         elevation={0}
         sx={{
