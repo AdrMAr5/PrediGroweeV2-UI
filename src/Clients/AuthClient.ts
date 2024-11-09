@@ -60,9 +60,7 @@ class AuthClient extends BaseClient {
   }
   async getUser(id: string) {
     try {
-      const res = await this.axiosInstance.get('/users/' + id, {
-        withCredentials: true,
-      });
+      const res = await this.axiosInstance.get('/users/' + id);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get user: " + err);
@@ -76,6 +74,22 @@ class AuthClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't update user: " + err);
+    }
+  }
+
+  async loginWithGoogle(access_token: string) {
+    console.log('logging in with google...');
+
+    try {
+      const res = await this.axiosInstance.post(
+        '/login/google',
+        { access_token },
+        { withCredentials: true }
+      );
+      sessionStorage.setItem('accessToken', res.data.accessToken);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't login with Google: " + err);
     }
   }
 }

@@ -13,9 +13,10 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
 import LoginValidate from '@/components/LoginValidate';
 import { LoadingButton } from '@mui/lab';
-import Image from 'next/image';
 import { useAuthContext } from '@/components/contexts/AuthContext';
 import { useRouter } from 'next/router';
+import { useGoogleLogin } from '@react-oauth/google';
+import GoogleIcon from '@/static/icons/GoogleIcon';
 
 type LoginFormValues = {
   email: string;
@@ -28,7 +29,8 @@ const initialValues: LoginFormValues = {
 
 export default function Index() {
   const router = useRouter();
-  const { login } = useAuthContext();
+  const { login, loginWithGoogle } = useAuthContext();
+
   const handleSubmit = async (
     values: LoginFormValues,
     { setSubmitting }: FormikHelpers<LoginFormValues>
@@ -38,11 +40,28 @@ export default function Index() {
       await login(values.email, values.password);
       await router.push('/quiz');
     } catch (error) {
+      alert('Login failed');
       console.log(error);
     } finally {
       setSubmitting(false);
     }
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const firstLogin = await loginWithGoogle(tokenResponse.access_token);
+        if (firstLogin) {
+          await router.push('/register/survey');
+        } else {
+          await router.push('/quiz');
+        }
+      } catch (error) {
+        console.error('Google login failed:', error);
+      }
+    },
+    onError: (error) => console.error('Google Login Error:', error),
+  });
   return (
     <AuthPagesLayout>
       <Card sx={{ maxWidth: 450, width: '100%' }}>
@@ -102,7 +121,8 @@ export default function Index() {
             <Button
               fullWidth
               variant="outlined"
-              startIcon={<Image src="" alt="Google" width={20} height={20} />}
+              onClick={() => handleGoogleLogin()}
+              startIcon={<GoogleIcon width="24px" />}
               sx={{ mt: 2, mb: 2 }}
             >
               Log in with Google

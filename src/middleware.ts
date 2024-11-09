@@ -15,7 +15,6 @@ const checkSession = async (sessionId: string, requestURL: string, adminRequired
       return NextResponse.redirect(new URL('/login', requestURL));
     }
     const data = await response.json();
-    console.log(data);
 
     if (adminRequired && data.role !== 'admin') {
       return NextResponse.redirect(new URL('/login', requestURL));

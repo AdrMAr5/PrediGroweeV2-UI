@@ -16,7 +16,7 @@ class BaseClient {
     this.axiosInstance.interceptors.request.use((config) => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
-        config.headers['Authorization'] = token;
+        config.headers['Authorization'] = 'Bearer ' + token;
       }
       return config;
     });
@@ -32,7 +32,7 @@ class BaseClient {
               {},
               { withCredentials: true }
             );
-            console.log('Token refreshed:', response.data);
+
             const { access_token } = response.data;
             sessionStorage.setItem('accessToken', access_token);
             return this.axiosInstance(originalRequest);

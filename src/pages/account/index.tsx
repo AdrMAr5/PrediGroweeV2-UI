@@ -44,7 +44,6 @@ const AccountPage = () => {
           setUserData(data);
           setEditedData(data);
         } else {
-          console.log('No user ID found');
           // setError('No user ID found');
         }
       } catch (error) {

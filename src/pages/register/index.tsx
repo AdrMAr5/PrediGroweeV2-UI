@@ -39,8 +39,8 @@ export default function Register() {
   ) => {
     setSubmitting(true);
     try {
-      register(values.email, values.password);
-      await router.push('/confirm');
+      await register(values.email, values.password);
+      await router.push('/register/survey');
     } catch (error) {
       alert(error);
     } finally {
