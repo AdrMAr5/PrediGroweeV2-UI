@@ -34,26 +34,15 @@ export default function StartQuiz({
 }: {
   nextStep: (sessionId: string, mode: QuizMode) => void;
 }) {
-  const { quizClient, setSessionId } = useQuizContext();
+  const { quizClient } = useQuizContext();
 
-  React.useEffect(() => {
-    const getSessions = async () => {
-      try {
-        const data = await quizClient.getUserQuizSessions();
-        setSessionId(data.sessions[0].ID);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getSessions();
-  }, [quizClient, setSessionId]);
   const handleSubmit = async (
     values: QuizFormValues,
     { setSubmitting }: FormikHelpers<QuizFormValues>
   ) => {
     setSubmitting(true);
     try {
-      const data = await quizClient.startQuiz(values.mode);
+      const data = await quizClient.startQuiz(values.mode, window.innerWidth, window.innerHeight);
       nextStep(data.session.sessionId, data.session.quizMode);
     } catch (error) {
       console.error(error);

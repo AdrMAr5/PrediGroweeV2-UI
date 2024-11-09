@@ -16,7 +16,7 @@ export type AuthContextType = {
   authClient: AuthClient;
   register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: (access_token: string) => Promise<void>;
+  loginWithGoogle: (access_token: string) => Promise<boolean>;
   logout: () => Promise<void>;
 };
 const AuthContext = React.createContext<AuthContextType>({
@@ -25,7 +25,7 @@ const AuthContext = React.createContext<AuthContextType>({
   authClient: new AuthClient(AUTH_SERVICE_URL),
   register: () => new Promise(() => {}),
   login: () => new Promise(() => {}),
-  loginWithGoogle: () => new Promise(() => {}),
+  loginWithGoogle: () => new Promise(() => false),
   logout: () => new Promise(() => {}),
 });
 
@@ -51,39 +51,28 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [authClient]);
 
   const register = async (email: string, password: string) => {
-    try {
-      const data = await authClient.register(email, password);
-      if (data.accessToken && data.user.role) {
-        setUserData({ userId: data.userId, role: data.role });
-      } else {
-        throw new Error('Failed to register');
-      }
-    } catch (error) {
-      alert(error);
+    const data = await authClient.register(email, password);
+    if (data.accessToken && data.user.role) {
+      setUserData({ userId: data.userId, role: data.role });
+    } else {
+      throw new Error('Failed to register');
     }
   };
   const login = async (email: string, password: string) => {
-    try {
-      const data = await authClient.login(email, password);
-      if (data.accessToken && data.role) {
-        setUserData({ userId: data.userId, role: data.role });
-      } else {
-        throw new Error('Failed to login');
-      }
-    } catch (error) {
-      alert(error);
+    const data = await authClient.login(email, password);
+    if (data.accessToken && data.role) {
+      setUserData({ userId: data.userId, role: data.role });
+    } else {
+      throw new Error('Failed to login');
     }
   };
   const loginWithGoogle = async (access_token: string) => {
-    try {
-      const data = await authClient.loginWithGoogle(access_token);
-      if (data.accessToken && data.role) {
-        setUserData({ userId: data.userId, role: data.role as Role });
-      } else {
-        throw new Error('Failed to login with Google');
-      }
-    } catch (error) {
-      alert(error);
+    const data = await authClient.loginWithGoogle(access_token);
+    if (data.accessToken && data.role) {
+      setUserData({ userId: data.userId, role: data.role as Role });
+      return !!data?.firstLogin;
+    } else {
+      throw new Error('Failed to login with Google');
     }
   };
   const logout = async () => {

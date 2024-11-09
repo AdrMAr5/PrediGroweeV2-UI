@@ -31,7 +31,7 @@ export default function TopNavBar() {
   };
 
   const { userData, logout, isLoggedIn } = useAuthContext();
-  console.log(userData);
+
   const isAdmin = userData.role === 'admin';
 
   return (

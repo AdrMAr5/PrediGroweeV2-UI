@@ -32,7 +32,7 @@ class BaseClient {
               {},
               { withCredentials: true }
             );
-            console.log('Token refreshed:', response.data);
+
             const { access_token } = response.data;
             sessionStorage.setItem('accessToken', access_token);
             return this.axiosInstance(originalRequest);

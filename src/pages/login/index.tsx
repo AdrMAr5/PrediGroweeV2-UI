@@ -40,6 +40,7 @@ export default function Index() {
       await login(values.email, values.password);
       await router.push('/quiz');
     } catch (error) {
+      alert('Login failed');
       console.log(error);
     } finally {
       setSubmitting(false);
@@ -49,8 +50,12 @@ export default function Index() {
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        await loginWithGoogle(tokenResponse.access_token);
-        await router.push('/quiz');
+        const firstLogin = await loginWithGoogle(tokenResponse.access_token);
+        if (firstLogin) {
+          await router.push('/register/survey');
+        } else {
+          await router.push('/quiz');
+        }
       } catch (error) {
         console.error('Google login failed:', error);
       }

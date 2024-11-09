@@ -19,9 +19,9 @@ class QuizClient extends BaseClient {
       throw new Error("Couldn't get quiz sessions: " + err);
     }
   }
-  async startQuiz(mode: string) {
+  async startQuiz(mode: string, screenWidth: number, screenHeight: number) {
     try {
-      const res = await this.axiosInstance.post('/new', { mode });
+      const res = await this.axiosInstance.post('/new', { mode, screenWidth, screenHeight });
       return res.data;
     } catch (err) {
       throw new Error("Couldn't start quiz: " + err);

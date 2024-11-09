@@ -79,7 +79,7 @@ class AuthClient extends BaseClient {
 
   async loginWithGoogle(access_token: string) {
     console.log('logging in with google...');
-    console.log(access_token);
+
     try {
       const res = await this.axiosInstance.post(
         '/login/google',
