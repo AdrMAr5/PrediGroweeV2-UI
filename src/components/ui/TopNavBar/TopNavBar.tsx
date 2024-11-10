@@ -78,11 +78,6 @@ export default function TopNavBar() {
               <ListItemButton onClick={() => router.push('/')}>
                 <ListItemText primary="Home" />
               </ListItemButton>
-              {isLoggedIn && (
-                <ListItemButton onClick={() => router.push('/dashboard')}>
-                  <ListItemText primary="Dashboard" />
-                </ListItemButton>
-              )}
               {isAdmin && (
                 <ListItemButton onClick={() => router.push('/admin')}>
                   <ListItemText primary="Admin" />
@@ -90,6 +85,13 @@ export default function TopNavBar() {
               )}
               <ListItemButton onClick={isLoggedIn ? logout : () => router.push('/login')}>
                 <ListItemText primary={isLoggedIn ? 'Logout' : 'Login'} />
+              </ListItemButton>
+              <ListItemButton
+                onClick={async () => {
+                  await router.push('/statistics');
+                }}
+              >
+                <ListItemText primary="Statistics" />
               </ListItemButton>
             </List>
           </Box>

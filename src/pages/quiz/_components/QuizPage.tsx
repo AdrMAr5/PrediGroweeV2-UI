@@ -41,6 +41,8 @@ import {
   p25,
   p26,
   p27,
+  p29,
+  p30,
 } from '@/static/parametersImages';
 import InfoTip from './InfoTip';
 
@@ -95,6 +97,10 @@ const QuizPage = ({
         return p26;
       case 27:
         return p27;
+      case 29:
+        return p29;
+      case 30:
+        return p30;
       default:
         return null;
     }
@@ -199,13 +205,11 @@ const QuizPage = ({
               </TableCell>
               <TableCell component="th" scope="row" align="center">
                 {param.name}
-                {param?.id <= 27 && (
-                  <InfoTip
-                    title={param.name}
-                    description={param.description}
-                    contentImage={renderTooltip(param.id)}
-                  />
-                )}
+                <InfoTip
+                  title={param.name}
+                  description={param.description}
+                  contentImage={renderTooltip(param.id)}
+                />
               </TableCell>
               <TableCell align="right">
                 {questionData.case.parametersValues[index].value2}
@@ -277,8 +281,8 @@ const QuizPage = ({
   return (
     <Card sx={{ margin: { xs: 1, sm: 2, md: 3, lg: 4 } }}>
       <CardHeader
-        title={`Patient ${questionData.case.code || 'Unknown'}`}
-        subheader={`Gender: ${questionData.case.gender || 'Unknown'}`}
+        title={`Patient ${questionData?.case.code || 'Unknown'}`}
+        subheader={`Gender: ${questionData?.case.gender || 'Unknown'}`}
       />
       <CardContent>
         <Stack spacing={4}>
@@ -298,7 +302,7 @@ const QuizPage = ({
                 }
               }}
             >
-              {questionData.options?.map((option) => {
+              {questionData?.options?.map((option) => {
                 return showCorrect ? (
                   <FormControlLabel
                     key={option}

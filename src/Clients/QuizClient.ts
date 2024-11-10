@@ -27,9 +27,9 @@ class QuizClient extends BaseClient {
       throw new Error("Couldn't start quiz: " + err);
     }
   }
-  async getQuestion(sessionId: string, questionId: number) {
+  async getQuestion(questionId: string) {
     try {
-      const res = await this.axiosInstance.get(`/${sessionId}/question/${questionId}`);
+      const res = await this.axiosInstance.get(`/${questionId}`);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get question: " + err);

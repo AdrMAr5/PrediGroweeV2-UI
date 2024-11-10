@@ -31,15 +31,9 @@ const InfoTip = ({ title, description, contentImage }: InfoTipProps) => {
       >
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <Box>
+          <Box display="block">
             <Typography>{description}</Typography>
-            {contentImage && (
-              <Image
-                src={contentImage}
-                alt={title}
-                style={{ maxWidth: '100%', maxHeight: '100%' }}
-              />
-            )}
+            {contentImage && <Image src={contentImage} alt={title} layout="responsive" />}
           </Box>
           <Button
             onClick={() => {

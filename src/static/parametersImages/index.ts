@@ -12,5 +12,7 @@ import p24 from './sn_mp.png';
 import p25 from './sn_pog.png';
 import p26 from './anb.png';
 import p27 from './afh_pfh.png';
+import p29 from './pg_nb.png';
+import p30 from './beta_angle.png';
 
-export { p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27 };
+export { p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p29, p30 };

@@ -1,9 +1,9 @@
-import { Box, Grid2, Paper, Typography } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { Box, Button, Grid2, Paper, Typography } from '@mui/material';
+
 import React from 'react';
 import { QuestionResult } from './results';
 import axios from 'axios';
+import ResultDetailsModal from '@/pages/quiz/_components/ResultDetailsModal';
 
 type QuizResultGridItemProps = {
   question: QuestionResult;
@@ -16,18 +16,7 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
     '2': '',
     '3': '',
   });
-  // const renderAge = (path: string) => {
-  //   switch (path) {
-  //     case '1':
-  //       return <Typography>Age: 9</Typography>;
-  //     case '2':
-  //       return <Typography>Age: 12</Typography>;
-  //     case '3':
-  //       return <Typography>Age: 16</Typography>;
-  //     default:
-  //       return 'Unknown';
-  //   }
-  // };
+  const [openDetails, setOpenDetails] = React.useState(false);
   const renderImage = (path: string, alt: string) => (
     <Box>
       <Box
@@ -35,9 +24,9 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
         alt={alt}
         src={imageSrc[path]}
         sx={{
-          maxWidth: '350px',
+          maxWidth: { xs: '100%', md: '350px' },
           width: 'auto',
-          objectFit: 'contain',
+          objectFit: 'scale-down',
         }}
       />
     </Box>
@@ -81,19 +70,6 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
             <Typography color="text.secondary">Question {index + 1}</Typography>
             <Typography fontWeight="medium">Your answer: {question?.answer}</Typography>
           </Box>
-          <Box display="flex" alignItems="center" gap={1}>
-            {question?.isCorrect ? (
-              <>
-                <CheckCircleIcon color="success" />
-                <Typography color="success.main">Correct</Typography>
-              </>
-            ) : (
-              <>
-                <CancelIcon color="error" />
-                <Typography color="error.main">Incorrect</Typography>
-              </>
-            )}
-          </Box>
         </Box>
         <Grid2 container direction="row" size={12} spacing={2}>
           {Object.keys(imageSrc).map((key) => (
@@ -102,6 +78,21 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
             </Grid2>
           ))}
         </Grid2>
+        <Button
+          onClick={() => {
+            setOpenDetails(true);
+          }}
+        >
+          Show details
+        </Button>
+        <ResultDetailsModal
+          open={openDetails}
+          setOpen={setOpenDetails}
+          title={`Question ${index + 1}`}
+          questionId={question?.questionId}
+          imagesSrc={imageSrc}
+          answer={question?.answer}
+        />
       </Paper>
     </Grid2>
   );

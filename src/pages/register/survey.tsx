@@ -44,7 +44,6 @@ const SurveyPage = () => {
     acknowledgements: true,
   });
   const [isError, setIsError] = useState(false);
-  console.log(formData);
 
   const handleChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;

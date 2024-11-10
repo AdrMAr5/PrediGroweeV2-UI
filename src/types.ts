@@ -18,6 +18,7 @@ type ParameterValue = {
   id: number;
   value1: number;
   value2: number;
+  value3: number;
 };
 type QuestionCase = {
   id: number;
@@ -25,6 +26,7 @@ type QuestionCase = {
   gender: string;
   age1: number;
   age2: number;
+  age3: number;
   parameters: Parameter[];
   parametersValues: ParameterValue[];
 };
@@ -35,6 +37,7 @@ type QuestionData = {
   options: string[];
   predictionAge: number;
   case: QuestionCase;
+  correct: string;
 };
 type QuizMode = 'educational' | 'timeLimited' | 'classic';
 const QUIZ_MODES: QuizMode[] = ['educational', 'timeLimited', 'classic'];
