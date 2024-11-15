@@ -1,10 +1,8 @@
-import getConfig from 'next/config';
-
-const { publicRuntimeConfig } = getConfig();
-
 export const AUTH_SERVICE_URL =
-  publicRuntimeConfig.AUTH_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/auth';
+  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'http://localhost:3000/api/auth';
 export const QUIZ_SERVICE_URL =
-  publicRuntimeConfig.QUIZ_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/quiz';
+  process.env.NEXT_PUBLIC_QUIZ_SERVICE_URL ?? 'http://localhost:3000/api/quiz';
+export const IMAGES_SERVICE_URL =
+  process.env.NEXT_PUBLIC_IMAGES_SERVICE_URL ?? 'http://localhost:3000/api/images';
 export const STATS_SERVICE_URL =
-  publicRuntimeConfig.STATS_SERVICE_URL ?? 'https://predigrowee.agh.edu.pl/api/stats';
+  process.env.NEXT_PUBLIC_STATS_SERVICE_URL ?? 'http://localhost:3000/api/stats';

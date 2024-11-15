@@ -45,6 +45,7 @@ import {
   p30,
 } from '@/static/parametersImages';
 import InfoTip from './InfoTip';
+import { IMAGES_SERVICE_URL } from '@/Envs';
 
 const QuizPage = ({
   nextStep,
@@ -159,10 +160,7 @@ const QuizPage = ({
     const fetchImage = async (path: string) => {
       try {
         const res = await axios.get(
-          'https://predigrowee.agh.edu.pl/api/images/' +
-            questionData?.id.toString() +
-            '/image/' +
-            path,
+          IMAGES_SERVICE_URL + '/' + questionData?.id.toString() + '/image/' + path,
           {
             responseType: 'blob',
             headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },

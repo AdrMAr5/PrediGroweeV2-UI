@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const checkSession = async (sessionId: string, requestURL: string, adminRequired: boolean) => {
   try {
-    const response = await fetch('https://predigrowee.agh.edu.pl/api/auth' + '/verifySession', {
+    const response = await fetch(process.env.AUTH_SERVICE_INTERNAL_URL + '/verifySession', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

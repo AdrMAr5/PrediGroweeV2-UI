@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import useRouterPush from '@/components/useRouterPush';
 import applyCaseMiddleware from 'axios-case-converter';
+import { AUTH_SERVICE_URL } from '@/Envs';
 
 class BaseClient {
   protected axiosInstance: AxiosInstance;
@@ -28,7 +29,7 @@ class BaseClient {
           originalRequest._retry = true;
           try {
             const response = await axios.post(
-              'https://predigrowee.agh.edu.pl/api/auth/refresh',
+              AUTH_SERVICE_URL + '/refresh',
               {},
               { withCredentials: true }
             );
