@@ -1,5 +1,5 @@
 import BaseClient from '@/Clients/BaseClient';
-import { UserData } from '@/types';
+import { Parameter, UserData } from '@/types';
 
 class AdminClient extends BaseClient {
   constructor(baseUrl: string) {
@@ -8,25 +8,70 @@ class AdminClient extends BaseClient {
 
   async getAllUsers() {
     try {
-      const res = await this.axiosInstance.get('/auth/users');
+      const res = await this.axiosInstance.get('/users');
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch users: " + err);
     }
   }
 
-  async updateUser(userId: string, updatedData: UserData) {
+  async getUserDetails(id: string) {
     try {
-      const res = await this.axiosInstance.put(`/auth/users/${userId}`, updatedData);
+      const res = await this.axiosInstance.get('/users/' + id);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch user details: " + err);
+    }
+  }
+
+  async updateUser(userId: string, updatedData: Partial<UserData>) {
+    try {
+      const res = await this.axiosInstance.patch(`/users/${userId}`, updatedData);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't update user: " + err);
     }
   }
 
+  async getAllQuestions() {
+    try {
+      const res = await this.axiosInstance.get('/questions');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch questions: " + err);
+    }
+  }
+
+  async getAllParameters() {
+    try {
+      const res = await this.axiosInstance.get('/parameters');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch parameters: " + err);
+    }
+  }
+
+  async updateParameter(parameterId: string, updatedParam: Parameter) {
+    try {
+      const res = await this.axiosInstance.patch(`/parameters/${parameterId}`, updatedParam);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't update parameter: " + err);
+    }
+  }
+
+  async getAllOptions() {
+    try {
+      const res = await this.axiosInstance.get('/options');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch options: " + err);
+    }
+  }
+
   async deleteUser(userId: string) {
     try {
-      const res = await this.axiosInstance.delete(`/auth/users/${userId}`);
+      const res = await this.axiosInstance.delete(`/users/${userId}`);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't delete user: " + err);
@@ -35,7 +80,7 @@ class AdminClient extends BaseClient {
 
   async getAllRoles() {
     try {
-      const res = await this.axiosInstance.get('/auth/roles');
+      const res = await this.axiosInstance.get('/roles');
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch roles: " + err);

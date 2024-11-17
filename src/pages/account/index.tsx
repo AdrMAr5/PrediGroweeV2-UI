@@ -40,11 +40,11 @@ const AccountPage = () => {
     const getAccountData = async () => {
       try {
         if (userId !== null) {
-          const data = await authClient.getUser(userId);
+          const data = await authClient.getUser();
           setUserData(data);
           setEditedData(data);
         } else {
-          // setError('No user ID found');
+          setError('No user ID found');
         }
       } catch (error) {
         console.error(error);

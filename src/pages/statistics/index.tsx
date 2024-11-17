@@ -3,12 +3,7 @@ import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/mate
 import StatsClient from '@/Clients/StatsClient';
 import { STATS_SERVICE_URL } from '@/Envs';
 import React, { useMemo } from 'react';
-type QuizModes = 'educational' | 'time_limited' | 'classic';
-type UserStats = {
-  accuracy: Record<QuizModes, number>;
-  correctAnswers: Record<QuizModes, number>;
-  totalQuestions: Record<QuizModes, number>;
-};
+import { UserStats } from '@/types';
 
 const AdminPage = () => {
   const statsClient = useMemo(() => new StatsClient(STATS_SERVICE_URL), []);
@@ -49,9 +44,9 @@ const AdminPage = () => {
         <Card>
           <CardHeader title="Time-limited mode" />
           <CardContent>
-            <Typography>Number of questions: {stats?.totalQuestions['time_limited']}</Typography>
+            <Typography>Number of questions: {stats?.totalQuestions['timeLimited']}</Typography>
             <Typography>
-              Number of correct answers: {stats?.correctAnswers['time_limited']}
+              Number of correct answers: {stats?.correctAnswers['timeLimited']}
             </Typography>
           </CardContent>
         </Card>

@@ -1,5 +1,15 @@
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
-import { Box, Card, CardHeader, Grid2, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid2,
+  Stack,
+  Typography,
+} from '@mui/material';
+import Link from 'next/link';
 
 const AdminPage = () => {
   return (
@@ -9,7 +19,7 @@ const AdminPage = () => {
         component="main"
         spacing={4}
         sx={{
-          maxWidth: '1000px',
+          maxWidth: 'lg',
           width: '100%',
           marginX: 'auto',
           marginTop: 4,
@@ -26,27 +36,102 @@ const AdminPage = () => {
           <Grid2 size={4}>
             <Stack direction="column" justifyContent="space-between" spacing={4} flexGrow={1}>
               <Card sx={{ flexGrow: 1 }}>
-                <CardHeader title="tu bedzie lista użytkowników" />
+                <CardHeader title="Users" />
+                <CardContent>
+                  <Typography>
+                    Registered users: <strong>100</strong>
+                  </Typography>
+                  <Typography>
+                    Active users: <strong>50</strong>
+                  </Typography>
+                  <Typography>
+                    Last 24h registrations: <strong>5</strong>
+                  </Typography>
+                  <Button
+                    LinkComponent={Link}
+                    href="/admin/users"
+                    variant="contained"
+                    sx={{ mt: 2 }}
+                  >
+                    Show all users
+                  </Button>
+                </CardContent>
               </Card>
 
               <Card sx={{ flexGrow: 1 }}>
-                <CardHeader title="tu bedzie cośtam innego" />
+                <CardHeader title="Statistics" />
+                <CardContent>
+                  <Typography>
+                    Quiz sessions: <strong>100</strong>
+                  </Typography>
+                  <Typography>
+                    Questions answered: <strong>500</strong>
+                  </Typography>
+                  <Typography>
+                    Correct answers: <strong>1000</strong>
+                  </Typography>
+                  <Button
+                    LinkComponent={Link}
+                    href="/admin/statistics"
+                    variant="contained"
+                    sx={{ mt: 2 }}
+                  >
+                    Show statistics
+                  </Button>
+                </CardContent>
               </Card>
             </Stack>
           </Grid2>
           <Grid2 size={4}>
-            <Card>
-              <CardHeader title="tu bedzie cośtam jeszcze innego" />
+            <Card sx={{ height: 'auto' }}>
+              <CardHeader title="Questions" />
+              <CardContent>
+                <Typography>
+                  Questions in database: <strong>100</strong>
+                </Typography>
+                <Button
+                  LinkComponent={Link}
+                  href="/admin/questions"
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                >
+                  Show all questions
+                </Button>
+              </CardContent>
             </Card>
           </Grid2>
           <Grid2 size={4}>
             <Card>
-              <CardHeader title="tu bedzie cośtam jeszcze innego" />
+              <CardHeader title="Surveys" />
+              <CardContent>
+                <Typography>
+                  Active surveys: <strong>2</strong>
+                </Typography>
+                <Button
+                  LinkComponent={Link}
+                  href="/admin/surveys"
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                >
+                  Show all surveys
+                </Button>
+              </CardContent>
             </Card>
           </Grid2>
           <Grid2 size={4}>
             <Card>
-              <CardHeader title="tu bedzie cośtam jeszcze innego" />
+              <CardHeader title="Site contents" />
+              <CardContent>
+                <Typography>Manage Contact, Privacy, About Pages</Typography>
+                <Button
+                  LinkComponent={Link}
+                  href="/admin/site-contents"
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                >
+                  Manage
+                </Button>
+              </CardContent>
             </Card>
           </Grid2>
         </Grid2>

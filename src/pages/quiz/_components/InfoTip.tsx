@@ -8,10 +8,11 @@ import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
 type InfoTipProps = {
   title: string;
   description: string;
+  referenceValues?: string;
   contentImage: StaticImageData | null;
 };
 
-const InfoTip = ({ title, description, contentImage }: InfoTipProps) => {
+const InfoTip = ({ title, description, referenceValues, contentImage }: InfoTipProps) => {
   const [open, setOpen] = React.useState(false);
   return (
     <>
@@ -33,6 +34,7 @@ const InfoTip = ({ title, description, contentImage }: InfoTipProps) => {
         <DialogContent>
           <Box display="block">
             <Typography>{description}</Typography>
+            {referenceValues && <Typography>Reference Value: {referenceValues}</Typography>}
             {contentImage && <Image src={contentImage} alt={title} layout="responsive" />}
           </Box>
           <Button
