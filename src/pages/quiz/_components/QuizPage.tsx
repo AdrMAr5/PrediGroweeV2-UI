@@ -206,6 +206,7 @@ const QuizPage = ({
                 <InfoTip
                   title={param.name}
                   description={param.description}
+                  referenceValues={param.referenceValues}
                   contentImage={renderTooltip(param.id)}
                 />
               </TableCell>

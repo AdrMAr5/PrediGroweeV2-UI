@@ -3,8 +3,10 @@ type UserData = {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role: UserRole;
+  createdAt: string;
 };
+type UserRole = 'admin' | 'user';
 
 export type { UserData };
 
@@ -38,8 +40,20 @@ type QuestionData = {
   predictionAge: number;
   case: QuestionCase;
   correct: string;
+  group: number;
 };
 type QuizMode = 'educational' | 'timeLimited' | 'classic';
+
+type QuestionOption = {
+  id: number;
+  option: string;
+};
+
+type UserStats = {
+  accuracy: Record<QuizMode, number>;
+  correctAnswers: Record<QuizMode, number>;
+  totalQuestions: Record<QuizMode, number>;
+};
 const QUIZ_MODES: QuizMode[] = ['educational', 'timeLimited', 'classic'];
 type QuizState = {
   sessionId: string;
@@ -47,5 +61,21 @@ type QuizState = {
   mode: QuizMode;
 };
 
-export type { Parameter, ParameterValue, QuestionCase, QuestionData, QuizState, QuizMode };
+type UserDetails = {
+  user: UserData;
+  stats: UserStats;
+};
+
+export type {
+  Parameter,
+  ParameterValue,
+  QuestionCase,
+  QuestionData,
+  QuizState,
+  QuizMode,
+  UserStats,
+  UserDetails,
+  UserRole,
+  QuestionOption,
+};
 export { QUIZ_MODES };

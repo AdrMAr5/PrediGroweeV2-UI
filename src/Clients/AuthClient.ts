@@ -58,9 +58,9 @@ class AuthClient extends BaseClient {
       throw new Error("Couldn't check session: " + err);
     }
   }
-  async getUser(id: string) {
+  async getUser() {
     try {
-      const res = await this.axiosInstance.get('/users/' + id);
+      const res = await this.axiosInstance.get('/user');
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get user: " + err);
