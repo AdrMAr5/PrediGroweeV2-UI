@@ -41,6 +41,14 @@ class AdminClient extends BaseClient {
       throw new Error("Couldn't fetch questions: " + err);
     }
   }
+  async getQuestionById(questionId: string) {
+    try {
+      const res = await this.axiosInstance.get(`/questions/${questionId}`);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch question: " + err);
+    }
+  }
 
   async getAllParameters() {
     try {
@@ -75,6 +83,32 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't delete user: " + err);
+    }
+  }
+  async getAllResponses() {
+    try {
+      const res = await this.axiosInstance.get('/responses');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch responses: " + err);
+    }
+  }
+
+  async getQuestionStats(questionId: number) {
+    try {
+      const res = await this.axiosInstance.get('/stats/' + questionId.toString());
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch question stats: " + err);
+    }
+  }
+
+  async getAllQuestionStats() {
+    try {
+      const res = await this.axiosInstance.get('/stats/questions');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch question stats: " + err);
     }
   }
 

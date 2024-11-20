@@ -15,7 +15,7 @@ import {
   Alert,
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import { QuestionDetailsModal } from './QuestionDetailsModal';
+import { QuestionDetailsModal } from '@/components/ui/QuestionDetailsModal/QuestionDetailsModal';
 import { QuestionData } from '@/types';
 import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
@@ -91,7 +91,11 @@ const AdminQuestionsPanel = () => {
                   <Chip label={question.correct} color="primary" variant="outlined" />
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => setSelectedQuestion(question)}>
+                  <IconButton
+                    onClick={async () =>
+                      setSelectedQuestion(await adminClient.getQuestionById(question.id.toString()))
+                    }
+                  >
                     <InfoIcon />
                   </IconButton>
                 </TableCell>
@@ -105,6 +109,12 @@ const AdminQuestionsPanel = () => {
         open={!!selectedQuestion}
         onClose={() => setSelectedQuestion(null)}
         question={selectedQuestion}
+        onUpdate={async (updated) => {
+          console.log('updating question', updated);
+        }}
+        fetchStats={async () => {
+          return adminClient.getQuestionStats(selectedQuestion?.id || 0);
+        }}
       />
     </>
   );

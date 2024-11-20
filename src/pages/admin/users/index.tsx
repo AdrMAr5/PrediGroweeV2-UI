@@ -21,7 +21,7 @@ import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
 import { UserData, UserDetails, UserRole } from '@/types';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
-import UserDetailsModal from './_components/UserDetailsModal';
+import UserDetailsModal from '@/components/ui/UserDetailsModal/UserDetailsModal';
 import Link from 'next/link';
 
 const AdminUsersPanel = () => {

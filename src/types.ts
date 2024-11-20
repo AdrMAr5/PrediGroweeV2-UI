@@ -54,6 +54,20 @@ type UserStats = {
   correctAnswers: Record<QuizMode, number>;
   totalQuestions: Record<QuizMode, number>;
 };
+
+type ResponseData = {
+  userId: string;
+  questionId: string;
+  answer: string;
+  isCorrect: boolean;
+  time: string;
+};
+type QuestionStats = {
+  questionId: number;
+  total: number;
+  correct: number;
+};
+
 const QUIZ_MODES: QuizMode[] = ['educational', 'timeLimited', 'classic'];
 type QuizState = {
   sessionId: string;
@@ -77,5 +91,7 @@ export type {
   UserDetails,
   UserRole,
   QuestionOption,
+  ResponseData,
+  QuestionStats,
 };
 export { QUIZ_MODES };
