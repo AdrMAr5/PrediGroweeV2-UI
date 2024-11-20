@@ -21,7 +21,11 @@ class QuizClient extends BaseClient {
   }
   async startQuiz(mode: string, screenWidth: number, screenHeight: number) {
     try {
-      const res = await this.axiosInstance.post('/new', { mode, screenWidth, screenHeight });
+      const res = await this.axiosInstance.post('/sessions/new', {
+        mode,
+        screenWidth,
+        screenHeight,
+      });
       return res.data;
     } catch (err) {
       throw new Error("Couldn't start quiz: " + err);
@@ -37,7 +41,7 @@ class QuizClient extends BaseClient {
   }
   async getNextQuestion(sessionId: string) {
     try {
-      const res = await this.axiosInstance.get(`/${sessionId}/nextQuestion`);
+      const res = await this.axiosInstance.get(`/sessions/${sessionId}/nextQuestion`);
       if (res.status === 204) {
         return null;
       }
@@ -49,7 +53,7 @@ class QuizClient extends BaseClient {
 
   async submitAnswer(sessionId: string, answer: string) {
     try {
-      const res = await this.axiosInstance.post(`${sessionId}/answer`, { answer });
+      const res = await this.axiosInstance.post(`/sessions/${sessionId}/answer`, { answer });
       return res.data;
     } catch (err) {
       throw new Error("Couldn't submit answer: " + err);
@@ -57,7 +61,7 @@ class QuizClient extends BaseClient {
   }
   async finishQuiz(sessionId: string) {
     try {
-      const res = await this.axiosInstance.post(`${sessionId}/finish`);
+      const res = await this.axiosInstance.post(`/sessions/${sessionId}/finish`);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't finish quiz: " + err);

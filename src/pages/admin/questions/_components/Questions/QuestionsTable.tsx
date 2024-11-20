@@ -110,7 +110,7 @@ const AdminQuestionsPanel = () => {
         onClose={() => setSelectedQuestion(null)}
         question={selectedQuestion}
         onUpdate={async (updated) => {
-          console.log('updating question', updated);
+          await adminClient.updateQuestion(updated.id.toString(), updated);
         }}
         fetchStats={async () => {
           return adminClient.getQuestionStats(selectedQuestion?.id || 0);
