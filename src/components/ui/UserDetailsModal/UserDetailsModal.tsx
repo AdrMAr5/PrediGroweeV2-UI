@@ -14,7 +14,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import UserStatsSection from '@/pages/admin/users/_components/UserStatsSection';
+import UserStatsSection from '@/components/ui/UserDetailsModal/UserStatsSection';
 import { UserDetails, UserRole } from '@/types';
 
 const UserDetailsModal: React.FC<{

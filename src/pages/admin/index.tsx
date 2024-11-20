@@ -72,7 +72,7 @@ const AdminPage = () => {
                   </Typography>
                   <Button
                     LinkComponent={Link}
-                    href="/admin/statistics"
+                    href="/admin/stats"
                     variant="contained"
                     sx={{ mt: 2 }}
                   >
