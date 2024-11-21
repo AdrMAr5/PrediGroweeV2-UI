@@ -13,7 +13,6 @@ class AuthClient extends BaseClient {
         { email, password },
         { withCredentials: true }
       );
-      sessionStorage.setItem('accessToken', res.data.accessToken);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't register: " + err);

@@ -140,7 +140,7 @@ class AdminClient extends BaseClient {
 
   async getQuestionStats(questionId: number) {
     try {
-      const res = await this.axiosInstance.get('/stats/' + questionId.toString());
+      const res = await this.axiosInstance.get('/stats/questions/' + questionId.toString());
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch question stats: " + err);

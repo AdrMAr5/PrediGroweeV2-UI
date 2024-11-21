@@ -51,12 +51,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   }, [authClient]);
 
   const register = async (email: string, password: string) => {
-    const data = await authClient.register(email, password);
-    if (data?.accessToken && data?.user.role) {
-      setUserData({ userId: data.userId, role: data.role });
-    } else {
-      throw new Error('Failed to register');
-    }
+    await authClient.register(email, password);
   };
   const login = async (email: string, password: string) => {
     const data = await authClient.login(email, password);

@@ -40,7 +40,7 @@ const AdminQuestionsPanel = () => {
       }
     };
     loadQuestions();
-  }, []);
+  }, [adminClient]);
 
   if (isLoading) {
     return (

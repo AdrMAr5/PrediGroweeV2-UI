@@ -26,29 +26,28 @@ const checkSession = async (sessionId: string, requestURL: string, adminRequired
 };
 
 export async function middleware(request: NextRequest) {
-  return NextResponse.next();
-  // if (request.nextUrl.pathname.startsWith('/quiz/')) {
-  //   return NextResponse.next();
-  // }
-  // const sessionId = request.cookies.get('session_id')?.value;
-  //
-  // // Define which paths require authentication
-  // const authRequiredPaths = ['/quiz', '/account', '/quiz', '/statistics'];
-  // const adminPaths = ['/admin'];
-  // if (
-  //   !authRequiredPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
-  //   !adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))
-  // ) {
-  //   return NextResponse.next();
-  // }
-  // if (!sessionId) {
-  //   return NextResponse.redirect(new URL('/login', request.url));
-  // }
-  // return await checkSession(
-  //   sessionId,
-  //   request.url,
-  //   adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))
-  // );
+  if (request.nextUrl.pathname.startsWith('/quiz/')) {
+    return NextResponse.next();
+  }
+  const sessionId = request.cookies.get('session_id')?.value;
+
+  // Define which paths require authentication
+  const authRequiredPaths = ['/quiz', '/account', '/quiz', '/statistics'];
+  const adminPaths = ['/admin'];
+  if (
+    !authRequiredPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
+    !adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))
+  ) {
+    return NextResponse.next();
+  }
+  if (!sessionId) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+  return await checkSession(
+    sessionId,
+    request.url,
+    adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))
+  );
 }
 
 export const config = {

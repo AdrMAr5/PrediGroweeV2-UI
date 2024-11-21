@@ -2,7 +2,6 @@ import { IconButton, TableCell, TableRow, TextField } from '@mui/material';
 import { QuestionOption } from '@/types';
 import { Cancel as CancelIcon, Save as SaveIcon } from '@mui/icons-material';
 import React from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 type NewOptionRowProps = {
   onSave: (option: Omit<QuestionOption, 'id'>) => void;

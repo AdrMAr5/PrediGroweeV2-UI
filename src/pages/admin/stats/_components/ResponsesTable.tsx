@@ -40,7 +40,7 @@ const AdminResponsesPanel = () => {
       }
     };
     loadResponses();
-  }, []);
+  }, [adminClient]);
 
   const dateConverter = (date: string) => {
     const newDate = new Date(date);
@@ -124,7 +124,7 @@ const AdminResponsesPanel = () => {
         onRoleChange={async (id, role) => {
           try {
             await adminClient.updateUser(id.toString(), { role: role });
-          } catch (e) {
+          } catch {
             setError('Failed to update user role');
           }
         }}

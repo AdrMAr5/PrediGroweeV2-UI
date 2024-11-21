@@ -40,7 +40,7 @@ const AdminPage = () => {
     };
     getSummary();
     loadActivity();
-  }, []);
+  }, [adminClient]);
   return (
     <Box>
       <TopNavBar />

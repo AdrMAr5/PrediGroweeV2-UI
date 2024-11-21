@@ -38,7 +38,7 @@ const ParametersTable = () => {
       }
     };
     loadParameters();
-  }, []);
+  }, [adminClient]);
 
   const handleUpdate = async (param: Parameter) => {
     try {
