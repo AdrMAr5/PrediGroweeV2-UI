@@ -47,7 +47,7 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
               name="name"
               defaultValue={parameter.name}
               onChange={(e) => {
-                setUpdatedParameter({ ...parameter, name: e.target.value });
+                setUpdatedParameter({ ...updatedParameter, name: e.target.value });
               }}
               fullWidth
               inputProps={{ style: { fontSize: 13 } }}
@@ -59,7 +59,7 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
               name="description"
               defaultValue={parameter.description}
               onChange={(e) => {
-                setUpdatedParameter({ ...parameter, description: e.target.value });
+                setUpdatedParameter({ ...updatedParameter, description: e.target.value });
               }}
               fullWidth
               inputProps={{ style: { fontSize: 13 } }}
@@ -71,7 +71,7 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
               name="reference values"
               defaultValue={parameter.referenceValues}
               onChange={(e) => {
-                setUpdatedParameter({ ...parameter, referenceValues: e.target.value });
+                setUpdatedParameter({ ...updatedParameter, referenceValues: e.target.value });
               }}
               fullWidth
               inputProps={{ style: { fontSize: 13 } }}

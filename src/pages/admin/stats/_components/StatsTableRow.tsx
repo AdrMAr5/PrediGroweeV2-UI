@@ -13,9 +13,9 @@ const StatsTableRow = ({ stat, fetchQuestion }: StatsTableRowProps) => {
   const [question, setQuestion] = React.useState<QuestionData | null>(null);
   React.useEffect(() => {
     if (showModal) {
-      fetchQuestion(stat.questionId.toString()).then(setQuestion);
+      fetchQuestion(stat?.questionId.toString()).then(setQuestion);
     }
-  }, [showModal, fetchQuestion, stat.questionId]);
+  }, [showModal, fetchQuestion, stat?.questionId]);
   return (
     <>
       <TableRow>
@@ -25,12 +25,12 @@ const StatsTableRow = ({ stat, fetchQuestion }: StatsTableRowProps) => {
               setShowModal(true);
             }}
           >
-            {stat.questionId}
+            {stat?.questionId}
           </Button>
         </TableCell>
-        <TableCell>{stat.total}</TableCell>
-        <TableCell>{stat.correct}</TableCell>
-        <TableCell>{((stat.correct / stat.total) * 100).toFixed(2)}%</TableCell>
+        <TableCell>{stat?.total}</TableCell>
+        <TableCell>{stat?.correct}</TableCell>
+        <TableCell>{((stat?.correct / stat?.total) * 100).toFixed(2)}%</TableCell>
       </TableRow>
       <QuestionDetailsModal
         open={showModal}

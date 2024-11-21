@@ -8,7 +8,7 @@ import ParametersTable from '@/pages/admin/questions/_components/Parameters/Para
 import OptionsManagement from '@/pages/admin/questions/_components/Options/OptionsManagement';
 
 type Tab = 'questions' | 'options' | 'cases' | 'parameters';
-const Tabs = ['questions', 'options', 'cases', 'parameters'] as const;
+const Tabs = ['questions', 'options', 'parameters'] as const;
 
 const AdminQuestionsPanel = () => {
   const [activeTab, setActiveTab] = React.useState<Tab>('questions');

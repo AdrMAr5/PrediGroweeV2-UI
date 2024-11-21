@@ -10,8 +10,37 @@ import {
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
+import ActivityChart from './_components/ActivityChart';
+import React from 'react';
+import AdminClient from '@/Clients/AdminClient';
+import { ADMIN_SERVICE_URL } from '@/Envs';
+import { ActivityData, DashboardSummary } from '@/types';
 
 const AdminPage = () => {
+  const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
+  const [data, setData] = React.useState<ActivityData[]>([]);
+  const [summary, setSummary] = React.useState<DashboardSummary | null>(null);
+  React.useEffect(() => {
+    const loadActivity = async () => {
+      try {
+        const data = await adminClient.getAllActivity();
+        setData(data);
+      } catch {
+        console.log('Failed to load activity');
+      }
+    };
+    const getSummary = async () => {
+      try {
+        const data = await adminClient.getDashboardSummary();
+        console.log(data);
+        setSummary(data);
+      } catch {
+        console.log('Failed to load summary');
+      }
+    };
+    getSummary();
+    loadActivity();
+  }, [adminClient]);
   return (
     <Box>
       <TopNavBar />
@@ -29,8 +58,11 @@ const AdminPage = () => {
         <Typography variant="h3">Admin Page</Typography>
         <Grid2 columns={12} container spacing={4} flexDirection="row" flexWrap="wrap">
           <Grid2 size={8}>
-            <Card sx={{ height: '500px' }}>
-              <CardHeader title="tu bedzie wykres" />
+            <Card>
+              <CardHeader title="Recent activity" />
+              <CardContent sx={{ height: 450 }}>
+                <ActivityChart data={data} />
+              </CardContent>
             </Card>
           </Grid2>
           <Grid2 size={4}>
@@ -39,13 +71,13 @@ const AdminPage = () => {
                 <CardHeader title="Users" />
                 <CardContent>
                   <Typography>
-                    Registered users: <strong>100</strong>
+                    Registered users: <strong>{summary?.authSummary?.users}</strong>
                   </Typography>
                   <Typography>
-                    Active users: <strong>50</strong>
+                    Active users: <strong>-</strong>
                   </Typography>
                   <Typography>
-                    Last 24h registrations: <strong>5</strong>
+                    Last 24h registrations: <strong>{summary?.authSummary?.lastRegistered}</strong>
                   </Typography>
                   <Button
                     LinkComponent={Link}
@@ -62,13 +94,13 @@ const AdminPage = () => {
                 <CardHeader title="Statistics" />
                 <CardContent>
                   <Typography>
-                    Quiz sessions: <strong>100</strong>
+                    Quiz sessions: <strong>{summary?.statsSummary?.quizSessions}</strong>
                   </Typography>
                   <Typography>
-                    Questions answered: <strong>500</strong>
+                    Total answers: <strong>{summary?.statsSummary?.totalResponses}</strong>
                   </Typography>
                   <Typography>
-                    Correct answers: <strong>1000</strong>
+                    Correct answers: <strong>{summary?.statsSummary?.totalCorrect}</strong>
                   </Typography>
                   <Button
                     LinkComponent={Link}
@@ -87,7 +119,7 @@ const AdminPage = () => {
               <CardHeader title="Questions" />
               <CardContent>
                 <Typography>
-                  Questions in database: <strong>100</strong>
+                  Questions in database: <strong>{summary?.quizSummary?.questions}</strong>
                 </Typography>
                 <Button
                   LinkComponent={Link}
@@ -105,7 +137,7 @@ const AdminPage = () => {
               <CardHeader title="Surveys" />
               <CardContent>
                 <Typography>
-                  Active surveys: <strong>2</strong>
+                  Active surveys: <strong>{summary?.quizSummary?.activeSurveys}</strong>
                 </Typography>
                 <Button
                   LinkComponent={Link}
@@ -125,7 +157,7 @@ const AdminPage = () => {
                 <Typography>Manage Contact, Privacy, About Pages</Typography>
                 <Button
                   LinkComponent={Link}
-                  href="/admin/site-contents"
+                  href="/admin/content"
                   variant="contained"
                   sx={{ mt: 2 }}
                 >

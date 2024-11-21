@@ -47,6 +47,7 @@ type QuizMode = 'educational' | 'timeLimited' | 'classic';
 type QuestionOption = {
   id: number;
   option: string;
+  questions?: number;
 };
 
 type UserStats = {
@@ -67,6 +68,11 @@ type QuestionStats = {
   total: number;
   correct: number;
 };
+type ActivityData = {
+  date: string;
+  total: number;
+  correct: number;
+};
 
 const QUIZ_MODES: QuizMode[] = ['educational', 'timeLimited', 'classic'];
 type QuizState = {
@@ -78,6 +84,28 @@ type QuizState = {
 type UserDetails = {
   user: UserData;
   stats: UserStats;
+};
+
+type QuizSummary = {
+  questions: number;
+  activeSurveys: number;
+};
+type StatsSummary = {
+  quizSessions: number;
+  totalResponses: number;
+  totalCorrect: number;
+};
+
+type AuthSummary = {
+  users: number;
+  activeUsers: number;
+  lastRegistered: number;
+};
+
+type DashboardSummary = {
+  quizSummary: QuizSummary;
+  statsSummary: StatsSummary;
+  authSummary: AuthSummary;
 };
 
 export type {
@@ -93,5 +121,7 @@ export type {
   QuestionOption,
   ResponseData,
   QuestionStats,
+  ActivityData,
+  DashboardSummary,
 };
 export { QUIZ_MODES };

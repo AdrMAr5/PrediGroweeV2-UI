@@ -1,5 +1,5 @@
 import BaseClient from '@/Clients/BaseClient';
-import { Parameter, UserData } from '@/types';
+import { Parameter, QuestionData, QuestionOption, UserData } from '@/types';
 
 class AdminClient extends BaseClient {
   constructor(baseUrl: string) {
@@ -50,6 +50,15 @@ class AdminClient extends BaseClient {
     }
   }
 
+  async updateQuestion(questionId: string, updatedQuestion: QuestionData) {
+    try {
+      const res = await this.axiosInstance.patch(`/questions/${questionId}`, updatedQuestion);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't update question: " + err);
+    }
+  }
+
   async getAllParameters() {
     try {
       const res = await this.axiosInstance.get('/parameters');
@@ -68,12 +77,47 @@ class AdminClient extends BaseClient {
     }
   }
 
+  async createParameter(newParam: Omit<Parameter, 'id'>): Promise<Parameter> {
+    try {
+      const res = await this.axiosInstance.post('/parameters', newParam);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't create parameter: " + err);
+    }
+  }
+
   async getAllOptions() {
     try {
       const res = await this.axiosInstance.get('/options');
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch options: " + err);
+    }
+  }
+
+  async updateOption(optionId: string, updatedOption: { option: string }) {
+    try {
+      const res = await this.axiosInstance.patch(`/options/${optionId}`, updatedOption);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't update option: " + err);
+    }
+  }
+
+  async createOption(newOption: Omit<QuestionOption, 'id'>) {
+    try {
+      const res = await this.axiosInstance.post('/options', newOption);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't create option: " + err);
+    }
+  }
+  async deleteOption(id: string) {
+    try {
+      const res = await this.axiosInstance.delete(`/options/${id}`);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't delete option: " + err);
     }
   }
 
@@ -96,7 +140,7 @@ class AdminClient extends BaseClient {
 
   async getQuestionStats(questionId: number) {
     try {
-      const res = await this.axiosInstance.get('/stats/' + questionId.toString());
+      const res = await this.axiosInstance.get('/stats/questions/' + questionId.toString());
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch question stats: " + err);
@@ -145,6 +189,24 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't delete role: " + err);
+    }
+  }
+
+  async getAllActivity() {
+    try {
+      const res = await this.axiosInstance.get('/stats/activity');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch activity: " + err);
+    }
+  }
+
+  async getDashboardSummary() {
+    try {
+      const res = await this.axiosInstance.get('/dashboard');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch dashboard summary: " + err);
     }
   }
 }

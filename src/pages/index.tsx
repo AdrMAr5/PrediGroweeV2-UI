@@ -8,7 +8,6 @@ import predigroweeHero from '@/static/img/predigrowee-hero.png';
 
 export default function Home() {
   const { isLoggedIn } = useAuthContext();
-  console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
   return (
     <>
       <Head>

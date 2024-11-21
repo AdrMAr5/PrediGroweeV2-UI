@@ -35,7 +35,7 @@ const QuestionStatsTable = () => {
       }
     };
     loadStats();
-  }, []);
+  }, [adminClient]);
 
   const fetchQuestion = async (questionId: string) => {
     return await adminClient.getQuestionById(questionId);

@@ -44,7 +44,7 @@ const AdminUsersPanel = () => {
       }
     };
     loadUsers();
-  }, []);
+  }, [adminClient]);
 
   const handleViewDetails = async (userId: string) => {
     try {

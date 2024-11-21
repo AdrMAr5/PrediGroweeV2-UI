@@ -23,7 +23,7 @@ class StatsClient extends BaseClient {
   }
   async getQuizResults(sessionId: string) {
     try {
-      const res = await this.axiosInstance.get(`/${sessionId}`);
+      const res = await this.axiosInstance.get(`/quiz/${sessionId}`);
       return res.data;
     } catch (err) {
       throw new Error("Couldn't get quiz results: " + err);
