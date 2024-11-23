@@ -16,23 +16,12 @@ import {
 import { STATS_SERVICE_URL } from '@/Envs';
 import StatsClient from '@/Clients/StatsClient';
 import { useRouter } from 'next/router';
-
-export type SurveyFormValues = {
-  name: string;
-  surname: string;
-  gender: string;
-  age: number;
-  country: string;
-  visionDefect: string;
-  education: string;
-  experience: string;
-  acknowledgements: boolean;
-};
+import { UserSurvey } from '@/types';
 
 const SurveyPage = () => {
   const statsClient = new StatsClient(STATS_SERVICE_URL);
   const router = useRouter();
-  const [formData, setFormData] = useState<SurveyFormValues>({
+  const [formData, setFormData] = useState<UserSurvey>({
     name: '',
     surname: '',
     gender: '',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuestionData, ResponseData, UserDetails } from '@/types';
+import { QuestionData, ResponseData, UserDetails, UserSurvey } from '@/types';
 import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
 import {
@@ -14,14 +14,23 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Stack,
+  TextField,
 } from '@mui/material';
 import { QuestionDetailsModal } from '@/components/ui/QuestionDetailsModal/QuestionDetailsModal';
 import UserDetailsModal from '@/components/ui/UserDetailsModal/UserDetailsModal';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const AdminResponsesPanel = () => {
   const [responses, setResponses] = React.useState<ResponseData[]>([]);
+  const [surveys, setSurveys] = React.useState<UserSurvey[]>([]);
+  const [filteredResponses, setFilteredResponses] = React.useState<ResponseData[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [dateRange, setDateRange] = React.useState({
+    from: '',
+    to: '',
+  });
 
   const [selectedQuestion, setSelectedQuestion] = React.useState<QuestionData | null>(null);
   const [selectedUserDetails, setSelectedUserDetails] = React.useState<UserDetails | null>(null);
@@ -29,22 +38,120 @@ const AdminResponsesPanel = () => {
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
 
   React.useEffect(() => {
-    const loadResponses = async () => {
+    const loadData = async () => {
       try {
-        const data = await adminClient.getAllResponses();
-        setResponses(data);
+        const [responsesData, surveysData] = await Promise.all([
+          adminClient.getAllResponses(),
+          adminClient.getAllSurveyResponses(),
+        ]);
+        setResponses(responsesData);
+        setFilteredResponses(responsesData);
+        setSurveys(surveysData);
       } catch {
-        setError('Failed to load responses');
+        setError('Failed to load data');
       } finally {
         setIsLoading(false);
       }
     };
-    loadResponses();
+    loadData();
   }, [adminClient]);
+
+  React.useEffect(() => {
+    if (!dateRange.from && !dateRange.to) {
+      setFilteredResponses(responses);
+      return;
+    }
+
+    const fromDate = dateRange.from ? new Date(dateRange.from) : new Date(0);
+    const toDate = dateRange.to ? new Date(dateRange.to) : new Date();
+
+    const filtered = responses.filter((response) => {
+      const responseDate = new Date(response.time);
+      return responseDate >= fromDate && responseDate <= toDate;
+    });
+
+    setFilteredResponses(filtered);
+  }, [dateRange, responses]);
 
   const dateConverter = (date: string) => {
     const newDate = new Date(date);
     return newDate.toLocaleString();
+  };
+
+  const handleDateChange =
+    (field: 'from' | 'to') => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDateRange((prev) => ({
+        ...prev,
+        [field]: event.target.value,
+      }));
+    };
+
+  const handleDownloadCSV = () => {
+    // Prepare CSV data
+    const csvData = filteredResponses.map((response) => {
+      const survey = surveys.find((s) => s.userId?.toString() === response.userId.toString());
+      return {
+        'Case ID': response.questionId,
+        'User ID': response.userId,
+        Answer: response.answer,
+        'Is correct': response.isCorrect ? 'Yes' : 'No',
+        Time: dateConverter(response.time),
+        'Screen size': response.screenSize,
+        'Time spent[s]': response.timeSpent === 0 ? 'unknown' : response.timeSpent,
+        Gender: survey?.gender || '',
+        Age: survey?.age || '',
+        'Vision defect': survey?.visionDefect || '',
+        Education: survey?.education || '',
+        Experience: survey?.experience || '',
+        Country: survey?.country || '',
+        Name: survey?.name || '',
+        Surname: survey?.surname || '',
+      };
+    });
+
+    // Convert to CSV string
+    const headers = [
+      'Case ID',
+      'User ID',
+      'Answer',
+      'Is correct',
+      'Time',
+      'Screen size',
+      'Time spent[s]',
+      'Gender',
+      'Age',
+      'Vision defect',
+      'Education',
+      'Experience',
+      'Country',
+      'Name',
+      'Surname',
+    ];
+
+    const csvString = [
+      headers.join(','),
+      ...csvData.map((row) =>
+        headers
+          .map((header) => {
+            const value = row[header as keyof typeof row];
+            // Escape commas and quotes in values
+            return `"${String(value).replace(/"/g, '""')}"`;
+          })
+          .join(',')
+      ),
+    ].join('\n');
+
+    // Download file
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', `responses_${new Date().toISOString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   if (isLoading) {
@@ -65,19 +172,60 @@ const AdminResponsesPanel = () => {
 
   return (
     <>
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+          <TextField
+            label="From Date"
+            type="datetime-local"
+            value={dateRange.from}
+            onChange={handleDateChange('from')}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+          />
+          <TextField
+            label="To Date"
+            type="datetime-local"
+            value={dateRange.to}
+            onChange={handleDateChange('to')}
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+          />
+          <Button
+            variant="outlined"
+            onClick={() => setDateRange({ from: '', to: '' })}
+            sx={{ minWidth: '100px' }}
+          >
+            Clear
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<FileDownloadIcon />}
+            onClick={handleDownloadCSV}
+            sx={{ minWidth: '150px' }}
+          >
+            Export CSV
+          </Button>
+        </Stack>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          Showing {filteredResponses.length} of {responses.length} responses
+        </Typography>
+      </Paper>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Question ID</TableCell>
+              <TableCell>Case ID</TableCell>
               <TableCell>User ID</TableCell>
               <TableCell>Answer</TableCell>
               <TableCell>Is correct</TableCell>
               <TableCell>Time</TableCell>
+              <TableCell>Screen size</TableCell>
+              <TableCell>Time spent[s]</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {responses.map((res, index) => (
+            {filteredResponses.map((res, index) => (
               <TableRow key={index}>
                 <TableCell>
                   <Button
@@ -85,13 +233,15 @@ const AdminResponsesPanel = () => {
                       setSelectedQuestion(await adminClient.getQuestionById(res.questionId));
                     }}
                   >
-                    {res.questionId}
+                    {res.caseCode !== '' ? res.caseCode : res.questionId}
                   </Button>
                 </TableCell>
                 <TableCell>
                   <Button
                     onClick={async () => {
-                      setSelectedUserDetails(await adminClient.getUserDetails(res.userId));
+                      setSelectedUserDetails(
+                        await adminClient.getUserDetails(res.userId?.toString())
+                      );
                     }}
                   >
                     {res.userId}
@@ -100,18 +250,18 @@ const AdminResponsesPanel = () => {
                 <TableCell>{res.answer}</TableCell>
                 <TableCell>{res.isCorrect ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{dateConverter(res.time)}</TableCell>
+                <TableCell>{res.screenSize}</TableCell>
+                <TableCell>{res.timeSpent === 0 ? 'unknown' : res.timeSpent}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
       <QuestionDetailsModal
         open={!!selectedQuestion}
         onClose={() => setSelectedQuestion(null)}
         question={selectedQuestion}
-        onUpdate={async (updated) => {
-          console.log('updating question', updated);
-        }}
         fetchStats={async () => {
           return adminClient.getQuestionStats(selectedQuestion?.id || 0);
         }}

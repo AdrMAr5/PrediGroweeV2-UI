@@ -1,19 +1,35 @@
 import React from 'react';
 import { Box, Button, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import ImagesClient from '@/Clients/ImagesClient';
 
 type InfoTipProps = {
+  paramId: number;
   title: string;
   description: string;
   referenceValues?: string;
-  contentImage: StaticImageData | null;
+  imagesClient: ImagesClient;
 };
 
-const InfoTip = ({ title, description, referenceValues, contentImage }: InfoTipProps) => {
+const InfoTip = ({ paramId, title, description, referenceValues, imagesClient }: InfoTipProps) => {
   const [open, setOpen] = React.useState(false);
+  const [imageUrl, setImageUrl] = React.useState('');
+  React.useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const blob = await imagesClient.getParamImage(paramId);
+        setImageUrl(URL.createObjectURL(blob));
+      } catch (err) {
+        console.error('Failed to load image:', err);
+      }
+    };
+    if (open) {
+      console.log('loading image');
+      loadImage();
+    }
+  }, [paramId, imagesClient, open]);
   return (
     <>
       <IconButton
@@ -35,7 +51,15 @@ const InfoTip = ({ title, description, referenceValues, contentImage }: InfoTipP
           <Box display="block">
             <Typography>{description}</Typography>
             {referenceValues && <Typography>Reference Value: {referenceValues}</Typography>}
-            {contentImage && <Image src={contentImage} alt={title} layout="responsive" />}
+            {imageUrl && (
+              <Image
+                src={imageUrl}
+                alt={title}
+                width={350}
+                height={350}
+                style={{ objectFit: 'contain' }}
+              />
+            )}
           </Box>
           <Button
             onClick={() => {

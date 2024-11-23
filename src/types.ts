@@ -1,3 +1,16 @@
+type UserSurvey = {
+  userId?: number;
+  name: string;
+  surname: string;
+  gender: string;
+  age: number;
+  country: string;
+  visionDefect: string;
+  education: string;
+  experience: string;
+  acknowledgements: boolean;
+};
+
 type UserData = {
   id: number;
   firstName: string;
@@ -5,6 +18,7 @@ type UserData = {
   email: string;
   role: UserRole;
   createdAt: string;
+  googleId?: string;
 };
 type UserRole = 'admin' | 'user';
 
@@ -57,11 +71,14 @@ type UserStats = {
 };
 
 type ResponseData = {
-  userId: string;
+  userId: number;
+  caseCode: string;
   questionId: string;
   answer: string;
   isCorrect: boolean;
   time: string;
+  screenSize: string;
+  timeSpent: number;
 };
 type QuestionStats = {
   questionId: number;
@@ -84,6 +101,7 @@ type QuizState = {
 type UserDetails = {
   user: UserData;
   stats: UserStats;
+  survey: UserSurvey;
 };
 
 type QuizSummary = {
@@ -109,6 +127,7 @@ type DashboardSummary = {
 };
 
 export type {
+  UserSurvey,
   Parameter,
   ParameterValue,
   QuestionCase,

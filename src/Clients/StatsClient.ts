@@ -1,5 +1,5 @@
 import BaseClient from '@/Clients/BaseClient';
-import { SurveyFormValues } from '@/pages/register/survey';
+import { UserSurvey } from '@/types';
 import { AxiosError } from 'axios';
 
 class StatsClient extends BaseClient {
@@ -30,7 +30,7 @@ class StatsClient extends BaseClient {
     }
   }
 
-  async saveUserSurveyAnswers(answers: SurveyFormValues) {
+  async saveUserSurveyAnswers(answers: UserSurvey) {
     try {
       await this.axiosInstance.post('/survey', answers);
     } catch (err) {

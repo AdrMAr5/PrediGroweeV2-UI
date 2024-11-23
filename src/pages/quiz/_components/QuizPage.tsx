@@ -26,26 +26,9 @@ import { useQuizContext } from '@/components/contexts/QuizContext';
 import { useMediaQuery } from '@mui/system';
 import { QuestionData, QuizMode } from '@/types';
 import axios from 'axios';
-import {
-  p14,
-  p15,
-  p16,
-  p17,
-  p18,
-  p19,
-  p20,
-  p21,
-  p22,
-  p23,
-  p24,
-  p25,
-  p26,
-  p27,
-  p29,
-  p30,
-} from '@/static/parametersImages';
 import InfoTip from './InfoTip';
 import { IMAGES_SERVICE_URL } from '@/Envs';
+import ImagesClient from '@/Clients/ImagesClient';
 
 const QuizPage = ({
   nextStep,
@@ -67,45 +50,7 @@ const QuizPage = ({
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
   const notMedium = useMediaQuery(theme.breakpoints.down('md'));
   const [imageSrc, setImageSrc] = React.useState<Record<string, string>>({ '1': '', '2': '' });
-
-  const renderTooltip = (id: number) => {
-    switch (id) {
-      case 14:
-        return p14;
-      case 15:
-        return p15;
-      case 16:
-        return p16;
-      case 17:
-        return p17;
-      case 18:
-        return p18;
-      case 19:
-        return p19;
-      case 20:
-        return p20;
-      case 21:
-        return p21;
-      case 22:
-        return p22;
-      case 23:
-        return p23;
-      case 24:
-        return p24;
-      case 25:
-        return p25;
-      case 26:
-        return p26;
-      case 27:
-        return p27;
-      case 29:
-        return p29;
-      case 30:
-        return p30;
-      default:
-        return null;
-    }
-  };
+  const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
 
   const finishQuizSession = useCallback(async () => {
     try {
@@ -133,7 +78,12 @@ const QuizPage = ({
     }
     try {
       if (mode !== 'educational') {
-        await quizClient.submitAnswer(sessionId, growthDirection);
+        await quizClient.submitAnswer(
+          sessionId,
+          growthDirection,
+          window.innerWidth,
+          window.innerHeight
+        );
       }
       await getQuestion();
     } catch (error) {
@@ -144,7 +94,12 @@ const QuizPage = ({
   };
   const handleSubmitAnswer = async () => {
     try {
-      const data = await quizClient.submitAnswer(sessionId, growthDirection);
+      const data = await quizClient.submitAnswer(
+        sessionId,
+        growthDirection,
+        window.innerWidth,
+        window.innerHeight
+      );
       setCorrectAnswer(data.correct);
     } catch (error) {
       console.error(error);
@@ -160,7 +115,7 @@ const QuizPage = ({
     const fetchImage = async (path: string) => {
       try {
         const res = await axios.get(
-          IMAGES_SERVICE_URL + '/' + questionData?.id.toString() + '/image/' + path,
+          IMAGES_SERVICE_URL + '/questions/' + questionData?.id.toString() + '/image/' + path,
           {
             responseType: 'blob',
             headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },
@@ -204,10 +159,11 @@ const QuizPage = ({
               <TableCell component="th" scope="row" align="center">
                 {param.name}
                 <InfoTip
+                  paramId={param.id}
                   title={param.name}
                   description={param.description}
                   referenceValues={param.referenceValues}
-                  contentImage={renderTooltip(param.id)}
+                  imagesClient={imagesClient}
                 />
               </TableCell>
               <TableCell align="right">

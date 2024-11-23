@@ -1,5 +1,5 @@
 import BaseClient from '@/Clients/BaseClient';
-import { Parameter, QuestionData, QuestionOption, UserData } from '@/types';
+import { Parameter, QuestionData, QuestionOption, UserData, UserSurvey } from '@/types';
 
 class AdminClient extends BaseClient {
   constructor(baseUrl: string) {
@@ -207,6 +207,15 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch dashboard summary: " + err);
+    }
+  }
+
+  async getAllSurveyResponses(): Promise<UserSurvey[]> {
+    try {
+      const res = await this.axiosInstance.get('/users/-/surveys');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch survey responses data" + err);
     }
   }
 }

@@ -35,7 +35,10 @@ const QuizResultGridItem = ({ question, index }: QuizResultGridItemProps) => {
     const fetchImage = async (path: string) => {
       try {
         const res = await axios.get(
-          'https://predigrowee.agh.edu.pl/api/images/' + question?.questionId + '/image/' + path,
+          'https://predigrowee.agh.edu.pl/api/images/questions/' +
+            question?.questionId +
+            '/image/' +
+            path,
           {
             responseType: 'blob',
             headers: { Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') },

@@ -15,8 +15,9 @@ import {
 import ParametersTableRow from './ParametersTableRow';
 import { Parameter } from '@/types';
 import AdminClient from '@/Clients/AdminClient';
-import { ADMIN_SERVICE_URL } from '@/Envs';
+import { ADMIN_SERVICE_URL, IMAGES_SERVICE_URL } from '@/Envs';
 import NewParameterRow from './NewParameterRow';
+import ImagesClient from '@/Clients/ImagesClient';
 
 const ParametersTable = () => {
   const [parameters, setParameters] = React.useState<Parameter[]>([]);
@@ -25,6 +26,7 @@ const ParametersTable = () => {
   const [showNewRow, setShowNewRow] = React.useState(false);
 
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
+  const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
 
   React.useEffect(() => {
     const loadParameters = async () => {
@@ -40,19 +42,25 @@ const ParametersTable = () => {
     loadParameters();
   }, [adminClient]);
 
-  const handleUpdate = async (param: Parameter) => {
+  const handleUpdate = async (param: Parameter, image?: File) => {
     try {
       await adminClient.updateParameter(param.id.toString(), param);
+      if (image) {
+        await imagesClient.uploadParamImage(param.id, image);
+      }
       setParameters(parameters.map((p) => (p.id === param.id ? param : p)));
     } catch {
       setError('Failed to update parameter');
     }
   };
 
-  const handleCreate = async (param: Omit<Parameter, 'id'>) => {
+  const handleCreate = async (param: Omit<Parameter, 'id'>, image: File | null) => {
     try {
       const newParameter = await adminClient.createParameter(param);
       setParameters([...parameters, newParameter]);
+      if (image && newParameter.id) {
+        await imagesClient.uploadParamImage(newParameter.id, image);
+      }
       setShowNewRow(false);
     } catch {
       setError('Failed to create parameter');
@@ -94,17 +102,20 @@ const ParametersTable = () => {
               <TableCell width="115px">
                 <strong>Reference value</strong>
               </TableCell>
+              {/* <TableCell width="200px">
+                <strong>Image</strong>
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {parameters.map((param, index) => (
-              <ParametersTableRow parameter={param} handleUpdate={handleUpdate} key={index} />
+            {parameters.map((param) => (
+              <ParametersTableRow key={param.id} parameter={param} handleUpdate={handleUpdate} />
             ))}
             {showNewRow && (
               <NewParameterRow onSave={handleCreate} onCancel={() => setShowNewRow(false)} />
             )}
             <TableRow>
-              <TableCell colSpan={5}>
+              <TableCell colSpan={6}>
                 <Button
                   variant="contained"
                   color="primary"

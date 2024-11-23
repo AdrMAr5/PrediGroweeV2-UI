@@ -88,7 +88,7 @@ export const QuestionDetailsModal: React.FC<QuestionDetailsDialogProps> = ({
   const handleFetchImage = async (path: string) => {
     try {
       const res = await axios.get(
-        `https://predigrowee.agh.edu.pl/api/images/${editedQuestion.id}/image/${path}`,
+        `https://predigrowee.agh.edu.pl/api/images/questions/${editedQuestion.id}/image/${path}`,
         {
           responseType: 'blob',
           headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` },

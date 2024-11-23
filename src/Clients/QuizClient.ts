@@ -51,9 +51,12 @@ class QuizClient extends BaseClient {
     }
   }
 
-  async submitAnswer(sessionId: string, answer: string) {
+  async submitAnswer(sessionId: string, answer: string, screenWidth: number, screenHeight: number) {
     try {
-      const res = await this.axiosInstance.post(`/sessions/${sessionId}/answer`, { answer });
+      const res = await this.axiosInstance.post(`/sessions/${sessionId}/answer`, {
+        answer,
+        screen_size: screenWidth + 'x' + screenHeight,
+      });
       return res.data;
     } catch (err) {
       throw new Error("Couldn't submit answer: " + err);

@@ -16,9 +16,10 @@ import {
 } from '@mui/material';
 import React from 'react';
 import QuizClient from '@/Clients/QuizClient';
-import { QUIZ_SERVICE_URL } from '@/Envs';
+import { IMAGES_SERVICE_URL, QUIZ_SERVICE_URL } from '@/Envs';
 import InfoTip from '@/pages/quiz/_components/InfoTip';
 import { QuestionData } from '@/types';
+import ImagesClient from '@/Clients/ImagesClient';
 
 type ResultDetailsModalProps = {
   open: boolean;
@@ -39,6 +40,7 @@ const ResultDetailsModal = ({
 }: ResultDetailsModalProps) => {
   const quizClient = React.useMemo(() => new QuizClient(QUIZ_SERVICE_URL), []);
   const [questionDetails, setQuestionDetails] = React.useState<QuestionData>();
+  const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
   React.useEffect(() => {
     const fetchQuestionDetails = async () => {
       try {
@@ -71,7 +73,12 @@ const ResultDetailsModal = ({
               <TableCell component="th" scope="row" align="left">
                 {param.name}
                 {param?.id <= 27 && (
-                  <InfoTip title={param.name} description={param.description} contentImage={null} />
+                  <InfoTip
+                    paramId={param.id}
+                    title={param.name}
+                    description={param.description}
+                    imagesClient={imagesClient}
+                  />
                 )}
               </TableCell>
               <TableCell>{questionDetails?.case?.parametersValues[index].value1}</TableCell>
