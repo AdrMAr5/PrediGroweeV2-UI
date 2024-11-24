@@ -70,14 +70,15 @@ const ResultDetailsModal = ({
             <TableRow key={index}>
               <TableCell component="th" scope="row" align="left">
                 {param.name}
-                {param?.id <= 27 && (
-                  <InfoTip
-                    paramId={param.id}
-                    title={param.name}
-                    description={param.description}
-                    imagesClient={imagesClient}
-                  />
-                )}
+                (
+                <InfoTip
+                  paramId={param.id}
+                  title={param.name}
+                  description={param.description}
+                  referenceValues={param.referenceValues}
+                  imagesClient={imagesClient}
+                />
+                )
               </TableCell>
               <TableCell>{questionDetails?.case?.parametersValues[index].value1}</TableCell>
 

@@ -53,13 +53,23 @@ const QuizPage = ({
   const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
 
   const finishQuizSession = useCallback(async () => {
+    if (growthDirection === '' && mode !== 'educational') {
+      alert('Please select a growth direction');
+      return;
+    }
     try {
+      await quizClient.submitAnswer(
+        sessionId,
+        growthDirection,
+        window.innerWidth,
+        window.innerHeight
+      );
       await quizClient.finishQuiz(sessionId);
       nextStep();
     } catch (error) {
       console.error(error);
     }
-  }, [quizClient, sessionId, nextStep]);
+  }, [quizClient, sessionId, nextStep, growthDirection, mode]);
   const getQuestion = useCallback(async () => {
     try {
       const data = await quizClient.getNextQuestion(sessionId);
@@ -290,7 +300,9 @@ const QuizPage = ({
               Show Correct Answer
             </Button>
           )}
-          <Button onClick={finishQuizSession}>Finish</Button>
+          <Button onClick={finishQuizSession} disabled={growthDirection === ''}>
+            Finish
+          </Button>
         </Stack>
       </CardContent>
     </Card>
