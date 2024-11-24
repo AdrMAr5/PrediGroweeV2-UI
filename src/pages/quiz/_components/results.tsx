@@ -17,19 +17,7 @@ import StatsClient from '@/Clients/StatsClient';
 import { STATS_SERVICE_URL } from '@/Envs';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import QuizResultGridItem from '@/pages/quiz/_components/QuizResultGridItem';
-
-export type QuestionResult = {
-  questionId: string;
-  answer: string;
-  isCorrect: boolean;
-};
-type QuizResults = {
-  mode: string;
-  correctAnswers: number;
-  totalQuestions: number;
-  accuracy: number;
-  questions: QuestionResult[];
-};
+import { QuizResults } from '@/types';
 
 const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: () => void }) => {
   const [results, setResults] = useState<QuizResults | null>(null);

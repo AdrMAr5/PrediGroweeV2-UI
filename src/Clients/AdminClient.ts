@@ -1,5 +1,12 @@
 import BaseClient from '@/Clients/BaseClient';
-import { Parameter, QuestionData, QuestionOption, UserData, UserSurvey } from '@/types';
+import {
+  Parameter,
+  QuestionData,
+  QuestionOption,
+  SurveyGroupedStats,
+  UserData,
+  UserSurvey,
+} from '@/types';
 
 class AdminClient extends BaseClient {
   constructor(baseUrl: string) {
@@ -216,6 +223,14 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch survey responses data" + err);
+    }
+  }
+  async getStatsGroupedBySurvey(groupBy: string): Promise<SurveyGroupedStats[]> {
+    try {
+      const res = await this.axiosInstance.get(`/stats/grouped?groupBy=${groupBy}`);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch grouped stats: " + err);
     }
   }
 }

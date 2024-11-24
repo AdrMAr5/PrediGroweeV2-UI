@@ -4,7 +4,7 @@ import Head from 'next/head';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import Link from 'next/link';
 import { useAuthContext } from '@/components/contexts/AuthContext';
-import predigroweeHero from '@/static/img/predigrowee-hero.png';
+import heroImage from '/public/predigrowee-hero.png';
 
 export default function Home() {
   const { isLoggedIn } = useAuthContext();
@@ -19,7 +19,7 @@ export default function Home() {
       <Box
         sx={{
           height: '94vh',
-          backgroundImage: `url(${predigroweeHero.src})`,
+          backgroundImage: `url(${heroImage.src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

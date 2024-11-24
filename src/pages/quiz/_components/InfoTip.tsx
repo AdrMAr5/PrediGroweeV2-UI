@@ -26,7 +26,6 @@ const InfoTip = ({ paramId, title, description, referenceValues, imagesClient }:
       }
     };
     if (open) {
-      console.log('loading image');
       loadImage();
     }
   }, [paramId, imagesClient, open]);

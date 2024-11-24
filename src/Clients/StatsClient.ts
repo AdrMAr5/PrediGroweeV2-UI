@@ -43,5 +43,13 @@ class StatsClient extends BaseClient {
       }
     }
   }
+  async getSessionsStats() {
+    try {
+      const res = await this.axiosInstance.get('/sessions');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't get sessions stats: " + err);
+    }
+  }
 }
 export default StatsClient;

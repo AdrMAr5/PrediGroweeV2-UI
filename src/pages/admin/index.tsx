@@ -32,7 +32,6 @@ const AdminPage = () => {
     const getSummary = async () => {
       try {
         const data = await adminClient.getDashboardSummary();
-        console.log(data);
         setSummary(data);
       } catch {
         console.log('Failed to load summary');
@@ -144,6 +143,7 @@ const AdminPage = () => {
                   href="/admin/surveys"
                   variant="contained"
                   sx={{ mt: 2 }}
+                  disabled
                 >
                   Show all surveys
                 </Button>
@@ -160,6 +160,7 @@ const AdminPage = () => {
                   href="/admin/content"
                   variant="contained"
                   sx={{ mt: 2 }}
+                  disabled
                 >
                   Manage
                 </Button>

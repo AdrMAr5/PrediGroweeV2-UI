@@ -1,7 +1,7 @@
 import { Box, Button, Grid2, Paper, Typography } from '@mui/material';
 
 import React from 'react';
-import { QuestionResult } from './results';
+import { QuestionResult } from '@/types';
 import axios from 'axios';
 import ResultDetailsModal from '@/pages/quiz/_components/ResultDetailsModal';
 

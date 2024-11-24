@@ -126,6 +126,30 @@ type DashboardSummary = {
   authSummary: AuthSummary;
 };
 
+export type QuestionResult = {
+  questionId: string;
+  answer: string;
+  isCorrect: boolean;
+};
+
+type QuizResults = {
+  sessionId: number;
+  mode: string;
+  correctAnswers: number;
+  totalQuestions: number;
+  accuracy: number;
+  questions: QuestionResult[];
+  startTime: string;
+};
+
+type SurveyGroupedStats = {
+  group: string;
+  value: string;
+  total: number;
+  correct: number;
+  accuracy: number;
+};
+
 export type {
   UserSurvey,
   Parameter,
@@ -142,5 +166,7 @@ export type {
   QuestionStats,
   ActivityData,
   DashboardSummary,
+  QuizResults,
+  SurveyGroupedStats,
 };
 export { QUIZ_MODES };

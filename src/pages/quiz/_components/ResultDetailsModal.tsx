@@ -45,14 +45,12 @@ const ResultDetailsModal = ({
     const fetchQuestionDetails = async () => {
       try {
         const data = await quizClient.getQuestion(questionId);
-        console.log(data);
         setQuestionDetails(data);
       } catch (error) {
         console.error(error);
       }
     };
     if (questionId) {
-      console.log('fetching question details');
       fetchQuestionDetails();
     }
   }, [questionId, quizClient]);

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ResponsesTable from './_components/ResponsesTable';
 import QuestionStatsTable from '@/pages/admin/stats/_components/QuestionStatsTable';
+import UserStats from './_components/UsersStats';
 
 type Tab = 'recent responses' | 'questions stats' | 'users stats';
 const Tabs: Tab[] = ['recent responses', 'questions stats', 'users stats'] as const;
@@ -18,7 +19,7 @@ const AdminStatsPanel = () => {
       case 'questions stats':
         return <QuestionStatsTable></QuestionStatsTable>;
       case 'users stats':
-        return <></>;
+        return <UserStats></UserStats>;
       default:
         return null;
     }

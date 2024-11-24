@@ -70,5 +70,13 @@ class QuizClient extends BaseClient {
       throw new Error("Couldn't finish quiz: " + err);
     }
   }
+  async getAllParameters() {
+    try {
+      const res = await this.axiosInstance.get('/parameters');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't get parameters: " + err);
+    }
+  }
 }
 export default QuizClient;
