@@ -37,6 +37,7 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
         URL.revokeObjectURL(imageUrl);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameter?.id, open, imagesClient]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

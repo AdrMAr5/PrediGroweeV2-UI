@@ -5,6 +5,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { QuestionOption } from '@/types';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 type ParametersTableRowProps = {
   option: QuestionOption;
@@ -14,6 +15,8 @@ type ParametersTableRowProps = {
 const OptionTableRow = ({ option, handleUpdate, handleDelete }: ParametersTableRowProps) => {
   const [open, setOpen] = React.useState(false);
   const [updatedParameter, setUpdatedParameter] = React.useState<QuestionOption>(option);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [optionToDelete, setOptionToDelete] = React.useState<string | null>(null);
 
   if (!option || !option.id) return null;
 
@@ -26,7 +29,8 @@ const OptionTableRow = ({ option, handleUpdate, handleDelete }: ParametersTableR
           </IconButton>
           <IconButton
             onClick={() => {
-              handleDelete(option.id.toString());
+              setOptionToDelete(option.id.toString());
+              setDeleteModalOpen(true);
             }}
           >
             <DeleteIcon color="warning" />
@@ -67,6 +71,16 @@ const OptionTableRow = ({ option, handleUpdate, handleDelete }: ParametersTableR
           <TableCell />
         </TableRow>
       )}
+      <ConfirmationModal
+        open={deleteModalOpen}
+        title="Delete Option"
+        message={`This option is used for ${option.questions} questions. Are you sure you want to delete this option?`}
+        onConfirm={() => {
+          if (optionToDelete) handleDelete(optionToDelete);
+          setDeleteModalOpen(false);
+        }}
+        onCancel={() => setDeleteModalOpen(false)}
+      />
     </>
   );
 };

@@ -111,6 +111,7 @@ const AdminQuestionsPanel = () => {
         question={selectedQuestion}
         onUpdate={async (updated) => {
           await adminClient.updateQuestion(updated.id.toString(), updated);
+          setQuestions((prev) => prev.map((q) => (q.id === updated.id ? updated : q)));
         }}
         fetchStats={async () => {
           return adminClient.getQuestionStats(selectedQuestion?.id || 0);

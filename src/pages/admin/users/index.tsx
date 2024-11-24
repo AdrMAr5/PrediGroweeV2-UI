@@ -23,12 +23,15 @@ import { UserData, UserDetails, UserRole } from '@/types';
 import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import UserDetailsModal from '@/components/ui/UserDetailsModal/UserDetailsModal';
 import Link from 'next/link';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 const AdminUsersPanel = () => {
   const [users, setUsers] = React.useState<UserData[]>([]);
   const [selectedUserDetails, setSelectedUserDetails] = React.useState<UserDetails | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+  const [userToDelete, setUserToDelete] = React.useState<string | null>(null);
 
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
 
@@ -137,8 +140,13 @@ const AdminUsersPanel = () => {
                       <IconButton onClick={() => handleViewDetails(user.id.toString())}>
                         <InfoIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteUser(user.id.toString())}>
-                        <DeleteIcon />
+                      <IconButton
+                        onClick={() => {
+                          setUserToDelete(user.id.toString());
+                          setDeleteModalOpen(true);
+                        }}
+                      >
+                        <DeleteIcon color="warning" />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -153,6 +161,16 @@ const AdminUsersPanel = () => {
           onClose={() => setSelectedUserDetails(null)}
           userDetails={selectedUserDetails}
           onRoleChange={handleRoleUpdate}
+        />
+        <ConfirmationModal
+          open={deleteModalOpen}
+          title="Delete User"
+          message={`Are you sure you want to delete this user?`}
+          onConfirm={() => {
+            if (userToDelete) handleDeleteUser(userToDelete);
+            setDeleteModalOpen(false);
+          }}
+          onCancel={() => setDeleteModalOpen(false)}
         />
       </Box>
     </Box>

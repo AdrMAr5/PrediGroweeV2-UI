@@ -182,6 +182,41 @@ export const QuestionDetailsModal: React.FC<QuestionDetailsDialogProps> = ({
                   )}
                 </Paper>
               </Grid>
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Correct Answer
+                  </Typography>
+                  {editMode ? (
+                    <TextField
+                      select
+                      fullWidth
+                      size="small"
+                      value={editedQuestion.correct}
+                      onChange={(e) =>
+                        setEditedQuestion(
+                          (prev) =>
+                            prev && {
+                              ...prev,
+                              correct: e.target.value,
+                            }
+                        )
+                      }
+                      SelectProps={{
+                        native: true,
+                      }}
+                    >
+                      {editedQuestion.options.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </TextField>
+                  ) : (
+                    <Typography>{editedQuestion.correct}</Typography>
+                  )}
+                </Paper>
+              </Grid>
             </Grid>
           </Box>
 
