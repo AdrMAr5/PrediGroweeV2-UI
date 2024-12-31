@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
 const RegisterValidate = yup.object({
-  email: yup.string().email('Enter a valid email').required('Email is requiredasdfasdf'),
+  email: yup.string().email('Enter a valid email').required('Email is required'),
   password: yup
     .string()
     .min(8, 'Password should be of minimum 8 characters length')
@@ -10,6 +10,6 @@ const RegisterValidate = yup.object({
     .string()
     .required('Password confirmation is required')
     .oneOf([yup.ref('password')], 'Passwords must match'),
-  notRobot: yup.boolean().oneOf([true], 'You must confirm that you are not a robot'),
+  notRobot: yup.string().required('You must confirm that you are not a robot'),
 });
 export default RegisterValidate;

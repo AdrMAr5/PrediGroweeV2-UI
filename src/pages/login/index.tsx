@@ -107,7 +107,7 @@ export default function Index() {
                     loading={isSubmitting}
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 3, mb: 2, bgcolor: '#a5b4fc', '&:hover': { bgcolor: '#8c9eff' } }}
+                    sx={{ mt: 3, mb: 2 }}
                   >
                     Login
                   </LoadingButton>
@@ -126,13 +126,12 @@ export default function Index() {
             >
               Log in with Google
             </Button>
-            <Box sx={{ textAlign: 'center' }}>
+            <Typography align="center" variant="body2">
+              OR
+            </Typography>
+            <Box sx={{ textAlign: 'center', mt: 2, mb: 2 }}>
               <Link href="/register" variant="body2">
                 Register
-              </Link>
-              <br />
-              <Link href="/" variant="body2">
-                Confirm account
               </Link>
             </Box>
           </Box>

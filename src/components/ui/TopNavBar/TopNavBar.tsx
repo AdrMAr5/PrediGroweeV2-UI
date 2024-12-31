@@ -93,6 +93,20 @@ export default function TopNavBar() {
               >
                 <ListItemText primary="Statistics" />
               </ListItemButton>
+              <ListItemButton
+                onClick={async () => {
+                  await router.push('/privacy');
+                }}
+              >
+                <ListItemText primary="Privacy" />
+              </ListItemButton>
+              <ListItemButton
+                onClick={async () => {
+                  await router.push('/contact');
+                }}
+              >
+                <ListItemText primary="Contact" />
+              </ListItemButton>
             </List>
           </Box>
         </Drawer>

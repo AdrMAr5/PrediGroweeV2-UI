@@ -71,6 +71,7 @@ type UserStats = {
 };
 
 type ResponseData = {
+  id: number;
   userId: number;
   caseCode: string;
   questionId: string;

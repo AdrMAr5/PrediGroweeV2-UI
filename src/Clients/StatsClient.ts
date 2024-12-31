@@ -51,5 +51,12 @@ class StatsClient extends BaseClient {
       throw new Error("Couldn't get sessions stats: " + err);
     }
   }
+  async deleteResponse(id: string) {
+    try {
+      await this.axiosInstance.delete('/responses/' + id);
+    } catch (err) {
+      throw new Error("Couldn't delete response" + err);
+    }
+  }
 }
 export default StatsClient;

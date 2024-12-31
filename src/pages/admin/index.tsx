@@ -54,7 +54,7 @@ const AdminPage = () => {
           padding: 2,
         }}
       >
-        <Typography variant="h3">Admin Page</Typography>
+        <Typography variant="h3">Admin Panel</Typography>
         <Grid2 columns={12} container spacing={4} flexDirection="row" flexWrap="wrap">
           <Grid2 size={8}>
             <Card>

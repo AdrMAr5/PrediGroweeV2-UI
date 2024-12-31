@@ -128,9 +128,14 @@ class AdminClient extends BaseClient {
     }
   }
 
-  async deleteUser(userId: string) {
+  async deleteUser(userId: string, withResponses?: boolean) {
+    if (!withResponses) {
+      withResponses = true;
+    }
     try {
-      const res = await this.axiosInstance.delete(`/users/${userId}`);
+      const res = await this.axiosInstance.delete(
+        `/users/${userId}?withResponses=${withResponses}`
+      );
       return res.data;
     } catch (err) {
       throw new Error("Couldn't delete user: " + err);
@@ -231,6 +236,13 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch grouped stats: " + err);
+    }
+  }
+  async deleteResponse(id: string) {
+    try {
+      await this.axiosInstance.delete('responses/' + id);
+    } catch (err) {
+      throw new Error("Couldn't delete response" + err);
     }
   }
 }

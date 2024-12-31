@@ -16,10 +16,13 @@ import {
   Typography,
   Stack,
   TextField,
+  IconButton,
 } from '@mui/material';
 import { QuestionDetailsModal } from '@/components/ui/QuestionDetailsModal/QuestionDetailsModal';
 import UserDetailsModal from '@/components/ui/UserDetailsModal/UserDetailsModal';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 const AdminResponsesPanel = () => {
   const [responses, setResponses] = React.useState<ResponseData[]>([]);
@@ -27,6 +30,7 @@ const AdminResponsesPanel = () => {
   const [filteredResponses, setFilteredResponses] = React.useState<ResponseData[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [responseToDelete, setResponseToDelete] = React.useState<number | null>(null);
   const [dateRange, setDateRange] = React.useState({
     from: '',
     to: '',
@@ -222,6 +226,7 @@ const AdminResponsesPanel = () => {
               <TableCell>Time</TableCell>
               <TableCell>Screen size</TableCell>
               <TableCell>Time spent[s]</TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -252,6 +257,11 @@ const AdminResponsesPanel = () => {
                 <TableCell>{dateConverter(res.time)}</TableCell>
                 <TableCell>{res.screenSize}</TableCell>
                 <TableCell>{res.timeSpent === 0 ? 'unknown' : res.timeSpent}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => setResponseToDelete(res.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -278,6 +288,20 @@ const AdminResponsesPanel = () => {
             setError('Failed to update user role');
           }
         }}
+      />
+      <ConfirmationModal
+        title="Delete response"
+        message="Are you sure you want to delete this response?"
+        open={responseToDelete !== null}
+        onConfirm={async () => {
+          if (!responseToDelete) {
+            return;
+          }
+          await adminClient.deleteResponse(responseToDelete?.toString());
+          setResponses(responses.filter((r) => r.id !== responseToDelete));
+          setResponseToDelete(null);
+        }}
+        onCancel={() => setResponseToDelete(null)}
       />
     </>
   );

@@ -1,37 +1,55 @@
 import React from 'react';
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Checkbox,
-  FormControlLabel,
-  FormHelperText,
   Link,
   TextField,
+  Typography,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import AuthPagesLayout from '../../components/layouts/AuthPagesLayout';
-import { Formik, Form, Field, FormikHelpers } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import RegisterValidate from '../../components/RegisterValidate';
 import { useAuthContext } from '@/components/contexts/AuthContext';
 import { useRouter } from 'next/router';
+import ReCAPTCHA from 'react-google-recaptcha';
+import GoogleIcon from '@/static/icons/GoogleIcon';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export type RegisterFormValues = {
   email: string;
   password: string;
   retypePassword: string;
-  notRobot: boolean;
+  notRobot: string;
 };
 const initialValues: RegisterFormValues = {
   email: '',
   password: '',
   retypePassword: '',
-  notRobot: false,
+  notRobot: '',
 };
 
 export default function Register() {
+  const { loginWithGoogle } = useAuthContext();
   const router = useRouter();
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const firstLogin = await loginWithGoogle(tokenResponse.access_token);
+        if (firstLogin) {
+          await router.push('/register/survey');
+        } else {
+          await router.push('/quiz');
+        }
+      } catch {
+        console.log('Google login failed');
+      }
+    },
+    onError: () => console.log('Google Login failed:'),
+  });
   const { register } = useAuthContext();
   const handleSubmit = async (
     values: RegisterFormValues,
@@ -59,7 +77,15 @@ export default function Register() {
               validationSchema={RegisterValidate}
               validateOnChange
             >
-              {({ touched, errors, values, handleChange, handleBlur, isSubmitting }) => (
+              {({
+                touched,
+                errors,
+                values,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+                setFieldValue,
+              }) => (
                 <Form>
                   <TextField
                     value={values.email}
@@ -101,34 +127,38 @@ export default function Register() {
                     id="retypePassword"
                     error={touched.retypePassword && Boolean(errors.retypePassword)}
                     helperText={touched.retypePassword && errors.retypePassword}
+                    sx={{ mb: 2 }}
                   />
-                  <Field
-                    type="checkbox"
-                    name="notRobot"
-                    as={FormControlLabel}
-                    control={<Checkbox />}
-                    label="I am not a robot"
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''}
+                    onChange={(val) => {
+                      setFieldValue('notRobot', val, true);
+                    }}
                   />
-                  <FormHelperText color="error">
-                    {touched.notRobot && errors.notRobot}
-                  </FormHelperText>
-                  {/* Add reCAPTCHA component here */}
                   <LoadingButton
                     type="submit"
                     loading={isSubmitting}
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 3, mb: 2, bgcolor: '#a5b4fc', '&:hover': { bgcolor: '#8c9eff' } }}
+                    sx={{ mt: 3, mb: 2 }}
                   >
                     Register
                   </LoadingButton>
+                  <Typography align="center" variant="body2">
+                    OR
+                  </Typography>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => handleGoogleLogin()}
+                    startIcon={<GoogleIcon width="24px" />}
+                    sx={{ mt: 2, mb: 2 }}
+                  >
+                    Log in with Google
+                  </Button>
                   <Box sx={{ textAlign: 'center' }}>
                     <Link href="/login" variant="body2">
                       Login
-                    </Link>
-                    <br />
-                    <Link href="/confirm" variant="body2">
-                      Confirm account
                     </Link>
                   </Box>
                 </Form>
