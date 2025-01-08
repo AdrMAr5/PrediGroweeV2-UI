@@ -77,13 +77,11 @@ export default function StartQuiz({
                         value="educational"
                         control={<Radio />}
                         label="Educational"
-                        disabled
                       />
                       <FormControlLabel
-                        value="timeLimited"
+                        value="time_limited"
                         control={<Radio />}
                         label="Time Limited"
-                        disabled
                       />
                     </RadioGroup>
                   </FormControl>

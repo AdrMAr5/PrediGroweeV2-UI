@@ -17,7 +17,7 @@ const UserStatsSection = ({ stats }: UserStatsProps) => {
         <Typography>Accuracy: {stats.accuracy.classic * 100}%</Typography>
       </Box>
       <Box>
-        <Typography variant="h6">Time-limited mode</Typography>
+        <Typography variant="h6">time limited mode</Typography>
         <Typography>Total Questions: {stats.totalQuestions.timeLimited}</Typography>
         <Typography>Correct Answers: {stats.correctAnswers.timeLimited}</Typography>
         <Typography>Accuracy: {stats.accuracy.timeLimited * 100}%</Typography>

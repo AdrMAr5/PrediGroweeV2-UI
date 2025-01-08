@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -21,6 +21,7 @@ import {
   useTheme,
   Grid2,
   Box,
+  LinearProgress,
 } from '@mui/material';
 import { useQuizContext } from '@/components/contexts/QuizContext';
 import { useMediaQuery } from '@mui/system';
@@ -29,6 +30,8 @@ import axios from 'axios';
 import InfoTip from './InfoTip';
 import { IMAGES_SERVICE_URL } from '@/Envs';
 import ImagesClient from '@/Clients/ImagesClient';
+
+const QUESTION_TIMEOUT = 30;
 
 const QuizPage = ({
   nextStep,
@@ -45,6 +48,7 @@ const QuizPage = ({
   const [showCorrect, setShowCorrect] = React.useState(false);
   const [correctAnswer, setCorrectAnswer] = React.useState<string>('');
   const [imageNumber, setImageNumber] = React.useState<number>(0);
+  const [timeLeft, setTimeLeft] = React.useState(QUESTION_TIMEOUT);
   const { quizClient } = useQuizContext();
   const theme = useTheme();
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
@@ -53,23 +57,27 @@ const QuizPage = ({
   const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
 
   const finishQuizSession = useCallback(async () => {
-    if (growthDirection === '' && mode !== 'educational') {
-      alert('Please select a growth direction');
-      return;
-    }
     try {
-      await quizClient.submitAnswer(
-        sessionId,
-        growthDirection,
-        window.innerWidth,
-        window.innerHeight
-      );
+      if (
+        mode === 'classic' ||
+        (mode === 'educational' && showCorrect === false) ||
+        mode === 'time_limited'
+      ) {
+        console.log('submitting answer on finish');
+        await quizClient.submitAnswer(
+          sessionId,
+          growthDirection,
+          window.innerWidth,
+          window.innerHeight
+        );
+      }
       await quizClient.finishQuiz(sessionId);
       nextStep();
     } catch (error) {
       console.error(error);
     }
-  }, [quizClient, sessionId, nextStep, growthDirection, mode]);
+  }, [quizClient, sessionId, nextStep, mode, growthDirection, showCorrect]);
+
   const getQuestion = useCallback(async () => {
     try {
       const data = await quizClient.getNextQuestion(sessionId);
@@ -77,12 +85,16 @@ const QuizPage = ({
         await finishQuizSession();
       }
       setQuestionData(data);
+      if (mode === 'time_limited') {
+        setTimeLeft(QUESTION_TIMEOUT);
+      }
     } catch (error) {
       console.error(error);
     }
-  }, [quizClient, sessionId, finishQuizSession]);
+  }, [quizClient, sessionId, mode]);
+
   const handleClickNext = async () => {
-    if (growthDirection === '' && mode !== 'educational') {
+    if (growthDirection === '' && mode !== 'educational' && mode !== 'time_limited') {
       alert('Please select a growth direction');
       return;
     }
@@ -102,6 +114,7 @@ const QuizPage = ({
     setShowCorrect(false);
     setGrowthDirection('');
   };
+
   const handleSubmitAnswer = async () => {
     try {
       const data = await quizClient.submitAnswer(
@@ -117,11 +130,12 @@ const QuizPage = ({
     setShowCorrect(true);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getQuestion();
     setQuestionLoading(false);
   }, [getQuestion]);
-  React.useEffect(() => {
+
+  useEffect(() => {
     const fetchImage = async (path: string) => {
       try {
         const res = await axios.get(
@@ -143,6 +157,22 @@ const QuizPage = ({
     }
   }, [questionData]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (mode === 'time_limited' && !showCorrect) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            handleClickNext();
+            return QUESTION_TIMEOUT;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [mode, showCorrect]);
+
   if (questionLoading || !questionData) {
     return <Typography>Loading...</Typography>;
   }
@@ -150,6 +180,19 @@ const QuizPage = ({
   const renderImage = (path: string, alt: string) => (
     <Box component="img" alt={alt} src={imageSrc[path]} maxWidth="100%" maxHeight="100%" />
   );
+
+  const renderTimer = () => {
+    if (mode !== 'time_limited') return null;
+    return (
+      <Box sx={{ width: '100%', mb: 2 }}>
+        <LinearProgress variant="determinate" value={(timeLeft / QUESTION_TIMEOUT) * 100} />
+        <Typography variant="body2" color="text.secondary" align="center">
+          Time left: {timeLeft}s
+        </Typography>
+      </Box>
+    );
+  };
+
   const renderTable = () => (
     <TableContainer component={Paper}>
       <Table size="small">
@@ -251,6 +294,7 @@ const QuizPage = ({
       />
       <CardContent>
         <Stack spacing={4}>
+          {renderTimer()}
           {renderContent()}
           <FormControl component="fieldset">
             <FormLabel component="legend">
@@ -300,7 +344,10 @@ const QuizPage = ({
               Show Correct Answer
             </Button>
           )}
-          <Button onClick={finishQuizSession} disabled={growthDirection === ''}>
+          <Button
+            onClick={finishQuizSession}
+            disabled={growthDirection === '' && mode != 'educational'}
+          >
             Finish
           </Button>
         </Stack>

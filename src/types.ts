@@ -56,7 +56,7 @@ type QuestionData = {
   correct: string;
   group: number;
 };
-type QuizMode = 'educational' | 'timeLimited' | 'classic';
+type QuizMode = 'educational' | 'time_limited' | 'classic' | 'timeLimited';
 
 type QuestionOption = {
   id: number;
@@ -92,7 +92,7 @@ type ActivityData = {
   correct: number;
 };
 
-const QUIZ_MODES: QuizMode[] = ['educational', 'timeLimited', 'classic'];
+const QUIZ_MODES: QuizMode[] = ['educational', 'time_limited', 'classic'];
 type QuizState = {
   sessionId: string;
   step: 'start' | 'quiz' | 'results';

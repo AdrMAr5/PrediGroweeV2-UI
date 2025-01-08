@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const checkSession = async (sessionId: string, requestURL: string, adminRequired: boolean) => {
   try {
