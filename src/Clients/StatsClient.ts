@@ -58,5 +58,13 @@ class StatsClient extends BaseClient {
       throw new Error("Couldn't delete response" + err);
     }
   }
+  async getSurveyResponse(): Promise<UserSurvey> {
+    try {
+      const res = await this.axiosInstance.get('/survey');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't get survey response: " + err);
+    }
+  }
 }
 export default StatsClient;

@@ -16,6 +16,9 @@ import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
 import { useQuizContext } from '@/components/contexts/QuizContext';
 import { QuizMode, QUIZ_MODES } from '@/types';
+import StatsClient from '@/Clients/StatsClient';
+import { STATS_SERVICE_URL } from '@/Envs';
+import { useRouter } from 'next/router';
 
 type QuizFormValues = {
   mode: QuizMode;
@@ -34,7 +37,10 @@ export default function StartQuiz({
 }: {
   nextStep: (sessionId: string, mode: QuizMode) => void;
 }) {
+  const router = useRouter();
   const { quizClient } = useQuizContext();
+  const statsClient = React.useMemo(() => new StatsClient(STATS_SERVICE_URL), []);
+  const [enabled, setEnabled] = React.useState(false);
 
   const handleSubmit = async (
     values: QuizFormValues,
@@ -50,6 +56,19 @@ export default function StartQuiz({
       setSubmitting(false);
     }
   };
+  React.useEffect(() => {
+    const fetchSurvey = async () => {
+      try {
+        const survey = await statsClient.getSurveyResponse();
+        if (survey.name !== '') {
+          setEnabled(true);
+        }
+      } catch {
+        router.push('/register/survey');
+      }
+    };
+    fetchSurvey();
+  }, [statsClient, router]);
 
   return (
     <AuthPagesLayout>
@@ -91,6 +110,7 @@ export default function StartQuiz({
                     loading={isSubmitting}
                     fullWidth
                     sx={{ mt: 3, mb: 2 }}
+                    disabled={!enabled}
                   >
                     Start Quiz
                   </LoadingButton>
