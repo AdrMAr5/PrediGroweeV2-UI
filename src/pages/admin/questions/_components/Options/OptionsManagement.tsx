@@ -38,7 +38,7 @@ const OptionsManagement = () => {
       }
     };
     loadOptions();
-  }, []);
+  }, [adminClient]);
   const handleUpdate = async (option: QuestionOption) => {
     try {
       await adminClient.updateOption(option.id.toString(), option);

@@ -46,6 +46,21 @@ class AuthClient extends BaseClient {
       throw new Error("Couldn't logout: " + err);
     }
   }
+  async resetPassword(email: string) {
+    try {
+      const res = await this.axiosInstance.post('/reset-password', { email });
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't reset password: " + err);
+    }
+  }
+
+  async confirmPasswordReset(token: string, password: string) {
+    return this.axiosInstance.post('/reset-password/confirm', { token, password });
+  }
+  async verifyResetToken(token: string) {
+    return this.axiosInstance.get('/reset-password/verify', { params: { token } });
+  }
 
   async checkSession() {
     try {

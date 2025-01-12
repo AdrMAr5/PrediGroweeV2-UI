@@ -46,6 +46,11 @@ type QuestionCase = {
   parameters: Parameter[];
   parametersValues: ParameterValue[];
 };
+type UserQuizStats = {
+  userId: number;
+  totalAnswers: number;
+  correctAnswers: number;
+};
 
 type QuestionData = {
   id: number;
@@ -169,5 +174,6 @@ export type {
   DashboardSummary,
   QuizResults,
   SurveyGroupedStats,
+  UserQuizStats,
 };
 export { QUIZ_MODES };

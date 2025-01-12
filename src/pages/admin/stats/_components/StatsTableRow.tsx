@@ -1,3 +1,4 @@
+// StatsTableRow.tsx
 import { Button, TableCell, TableRow } from '@mui/material';
 import React from 'react';
 import { QuestionData, QuestionStats } from '@/types';
@@ -6,16 +7,19 @@ import QuestionDetailsModal from '@/components/ui/QuestionDetailsModal/QuestionD
 type StatsTableRowProps = {
   stat: QuestionStats;
   fetchQuestion: (questionId: string) => Promise<QuestionData>;
+  caseCode: string;
 };
 
-const StatsTableRow = ({ stat, fetchQuestion }: StatsTableRowProps) => {
+const StatsTableRow = ({ stat, fetchQuestion, caseCode }: StatsTableRowProps) => {
   const [showModal, setShowModal] = React.useState(false);
   const [question, setQuestion] = React.useState<QuestionData | null>(null);
+
   React.useEffect(() => {
     if (showModal) {
       fetchQuestion(stat?.questionId.toString()).then(setQuestion);
     }
   }, [showModal, fetchQuestion, stat?.questionId]);
+
   return (
     <>
       <TableRow>
@@ -25,7 +29,7 @@ const StatsTableRow = ({ stat, fetchQuestion }: StatsTableRowProps) => {
               setShowModal(true);
             }}
           >
-            {stat?.questionId}
+            {caseCode}
           </Button>
         </TableCell>
         <TableCell>{stat?.total}</TableCell>
@@ -41,4 +45,5 @@ const StatsTableRow = ({ stat, fetchQuestion }: StatsTableRowProps) => {
     </>
   );
 };
+
 export default StatsTableRow;

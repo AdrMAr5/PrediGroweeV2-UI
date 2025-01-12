@@ -17,6 +17,7 @@ export type AuthContextType = {
   register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (access_token: string) => Promise<boolean>;
+  resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 const AuthContext = React.createContext<AuthContextType>({
@@ -26,6 +27,7 @@ const AuthContext = React.createContext<AuthContextType>({
   register: () => new Promise(() => {}),
   login: () => new Promise(() => {}),
   loginWithGoogle: () => new Promise(() => false),
+  resetPassword: () => new Promise(() => {}),
   logout: () => new Promise(() => {}),
 });
 
@@ -70,6 +72,9 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error('Failed to login with Google');
     }
   };
+  const resetPassword = async (email: string) => {
+    await authClient.resetPassword(email);
+  };
   const logout = async () => {
     await authClient.logout();
     setUserData({ userId: null, role: null });
@@ -84,6 +89,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
           register,
           login,
           loginWithGoogle,
+          resetPassword,
           logout,
         }}
       >

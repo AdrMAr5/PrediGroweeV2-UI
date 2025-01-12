@@ -130,7 +130,7 @@ export default function Register() {
                     sx={{ mb: 2 }}
                   />
                   <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''}
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? 'a'}
                     onChange={(val) => {
                       setFieldValue('notRobot', val, true);
                     }}

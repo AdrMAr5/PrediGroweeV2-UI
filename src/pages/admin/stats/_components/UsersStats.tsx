@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, ToggleButton, ToggleButtonGroup, Typography, Card, CardContent } from '@mui/material';
+import {
+  Box,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  Card,
+  CardContent,
+  Tab,
+  Tabs,
+} from '@mui/material';
 import {
   BarChart,
   Bar,
@@ -12,7 +21,8 @@ import {
 } from 'recharts';
 import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
-import { SurveyGroupedStats } from '@/types';
+import { SurveyGroupedStats, UserQuizStats, UserSurvey } from '@/types';
+import UsersTable from './UsersTable';
 
 const groupingOptions = [
   { value: 'education', label: 'Education Level' },
@@ -25,9 +35,13 @@ const groupingOptions = [
 
 const UserStats = () => {
   const [selectedGroup, setSelectedGroup] = useState('education');
+  const [view, setView] = useState('chart');
   const [data, setData] = useState<SurveyGroupedStats[]>([]);
+  const [userStats, setUserStats] = useState<UserQuizStats[]>([]);
+  const [surveys, setSurveys] = useState<UserSurvey[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const formattedData = React.useMemo(() => {
     return data.map((item) => ({
       ...item,
@@ -41,8 +55,14 @@ const UserStats = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const stats = await adminClient.getStatsGroupedBySurvey(selectedGroup);
-        setData(stats);
+        const [statsData, surveysData, usersStats] = await Promise.all([
+          adminClient.getStatsGroupedBySurvey(selectedGroup),
+          adminClient.getAllSurveyResponses(),
+          adminClient.getAllUsersStats(),
+        ]);
+        setData(statsData);
+        setSurveys(surveysData);
+        setUserStats(usersStats);
         setError(null);
       } catch (err) {
         setError('Failed to fetch statistics');
@@ -74,40 +94,52 @@ const UserStats = () => {
       <CardContent>
         <Box mb={3}>
           <Typography variant="h6" gutterBottom>
-            User Statistics by {groupingOptions.find((opt) => opt.value === selectedGroup)?.label}
+            User Statistics
           </Typography>
-          <ToggleButtonGroup
-            value={selectedGroup}
-            exclusive
-            onChange={handleGroupChange}
-            aria-label="grouping options"
-            size="small"
-          >
-            {groupingOptions.map((option) => (
-              <ToggleButton key={option.value} value={option.value}>
-                {option.label}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Box>
+          <Tabs value={view} onChange={(_, newValue) => setView(newValue)} sx={{ mb: 2 }}>
+            <Tab label="Chart View" value="chart" />
+            <Tab label="Table View" value="table" />
+          </Tabs>
 
-        <Box height={400}>
-          {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-              <Typography>Loading...</Typography>
-            </Box>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={formattedData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="value" />
-                <YAxis domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
-                <Tooltip formatter={(value, name) => [`${value}%`, name]} />
-                <Legend />
-                <Bar dataKey="accuracyPercentage" name="Accuracy" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
+          {view === 'chart' && (
+            <>
+              <ToggleButtonGroup
+                value={selectedGroup}
+                exclusive
+                onChange={handleGroupChange}
+                aria-label="grouping options"
+                size="small"
+                sx={{ mb: 2 }}
+              >
+                {groupingOptions.map((option) => (
+                  <ToggleButton key={option.value} value={option.value}>
+                    {option.label}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+
+              <Box height={400}>
+                {loading ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                    <Typography>Loading...</Typography>
+                  </Box>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={formattedData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="value" />
+                      <YAxis domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
+                      <Tooltip formatter={(value, name) => [`${value}%`, name]} />
+                      <Legend />
+                      <Bar dataKey="accuracyPercentage" name="Accuracy" fill="#82ca9d" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </Box>
+            </>
           )}
+
+          {view === 'table' && !loading && <UsersTable stats={userStats} surveys={surveys} />}
         </Box>
       </CardContent>
     </Card>

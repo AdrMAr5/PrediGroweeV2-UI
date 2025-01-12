@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -8,6 +8,10 @@ import {
   Button,
   Link,
   CardHeader,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import AuthPagesLayout from '@/components/layouts/AuthPagesLayout';
@@ -29,7 +33,9 @@ const initialValues: LoginFormValues = {
 
 export default function Index() {
   const router = useRouter();
-  const { login, loginWithGoogle } = useAuthContext();
+  const { login, loginWithGoogle, resetPassword } = useAuthContext();
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
 
   const handleSubmit = async (
     values: LoginFormValues,
@@ -43,6 +49,20 @@ export default function Index() {
       alert('Login failed');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleReset = async () => {
+    setResetDialogOpen(true);
+  };
+
+  const handleResetSubmit = async () => {
+    try {
+      await resetPassword(resetEmail);
+      setResetDialogOpen(false);
+      alert('Password reset instructions have been sent to your email');
+    } catch {
+      alert('Failed to send reset password email');
     }
   };
 
@@ -61,6 +81,7 @@ export default function Index() {
     },
     onError: () => console.log('Google Login failed:'),
   });
+
   return (
     <AuthPagesLayout>
       <Card sx={{ maxWidth: 450, width: '100%' }}>
@@ -129,14 +150,42 @@ export default function Index() {
             <Typography align="center" variant="body2">
               OR
             </Typography>
-            <Box sx={{ textAlign: 'center', mt: 2, mb: 2 }}>
+            <Box sx={{ textAlign: 'center', mt: 1, mb: 2 }}>
               <Link href="/register" variant="body2">
                 Register
               </Link>
             </Box>
+            <Typography align="center" variant="body2">
+              Forgot password?
+            </Typography>
+            <Button fullWidth variant="text" onClick={() => handleReset()} sx={{ mb: 2 }}>
+              Reset password
+            </Button>
           </Box>
         </CardContent>
       </Card>
+
+      <Dialog open={resetDialogOpen} onClose={() => setResetDialogOpen(false)}>
+        <DialogTitle>Reset Password</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ mb: 2, mt: 2 }}>
+            Enter your email address. We&apos;ll send you instructions to reset your password.
+          </Typography>
+          <TextField
+            fullWidth
+            label="Email"
+            value={resetEmail}
+            onChange={(e) => setResetEmail(e.target.value)}
+            type="email"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setResetDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleResetSubmit} variant="contained">
+            Send Instructions
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AuthPagesLayout>
   );
 }

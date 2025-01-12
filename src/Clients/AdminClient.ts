@@ -245,6 +245,14 @@ class AdminClient extends BaseClient {
       throw new Error("Couldn't delete response" + err);
     }
   }
+  async getAllUsersStats() {
+    try {
+      const res = await this.axiosInstance.get('/stats/users');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch users stats: " + err);
+    }
+  }
 }
 
 export default AdminClient;
