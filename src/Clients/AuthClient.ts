@@ -19,17 +19,13 @@ class AuthClient extends BaseClient {
     }
   }
   async login(email: string, password: string) {
-    try {
-      const res = await this.axiosInstance.post(
-        '/login',
-        { email, password },
-        { withCredentials: true }
-      );
-      sessionStorage.setItem('accessToken', res.data.accessToken);
-      return res.data;
-    } catch {
-      throw new Error("Couldn't login");
-    }
+    const res = await this.axiosInstance.post(
+      '/login',
+      { email, password },
+      { withCredentials: true }
+    );
+    sessionStorage.setItem('accessToken', res.data.accessToken);
+    return res.data;
   }
   async logout() {
     try {

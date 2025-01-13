@@ -101,7 +101,7 @@ const AdminResponsesPanel = () => {
         'Is correct': response.isCorrect ? 'Yes' : 'No',
         Time: dateConverter(response.time),
         'Screen size': response.screenSize,
-        'Time spent[s]': response.timeSpent === 0 ? 'unknown' : response.timeSpent,
+        'Time spent[s]': response.timeSpent === 0 ? '<1' : response.timeSpent,
         Gender: survey?.gender || '',
         Age: survey?.age || '',
         'Vision defect': survey?.visionDefect || '',
@@ -256,7 +256,7 @@ const AdminResponsesPanel = () => {
                 <TableCell>{res.isCorrect ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{dateConverter(res.time)}</TableCell>
                 <TableCell>{res.screenSize}</TableCell>
-                <TableCell>{res.timeSpent === 0 ? 'unknown' : res.timeSpent}</TableCell>
+                <TableCell>{res.timeSpent === 0 ? '<1' : res.timeSpent}s</TableCell>
                 <TableCell>
                   <IconButton onClick={() => setResponseToDelete(res.id)}>
                     <DeleteIcon />

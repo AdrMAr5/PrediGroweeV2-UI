@@ -167,6 +167,7 @@ const UserDetailsModal: React.FC<{
               >
                 <MenuItem value="user">User</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="teacher">Teacher</MenuItem>
               </Select>
             </FormControl>
             {error && (
