@@ -18,7 +18,7 @@ const checkSession = async (sessionId: string, requestURL: string, adminRequired
     }
     const data = await response.json();
 
-    if (adminRequired && data.role !== 'admin') {
+    if (adminRequired && data.role !== 'admin' && data.role !== 'teacher') {
       return NextResponse.redirect(new URL('/login', requestURL));
     }
   } catch (err) {

@@ -3,7 +3,7 @@ import AuthClient from '@/Clients/AuthClient';
 import { AUTH_SERVICE_URL } from '@/Envs';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-type Role = 'admin' | 'user';
+type Role = 'admin' | 'user' | 'teacher';
 
 type UserData = {
   userId: string | null;

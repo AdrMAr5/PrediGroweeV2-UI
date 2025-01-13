@@ -32,7 +32,7 @@ export default function TopNavBar() {
 
   const { userData, logout, isLoggedIn } = useAuthContext();
 
-  const isAdmin = userData.role === 'admin';
+  const isAdmin = userData.role === 'admin' || userData.role === 'teacher';
 
   return (
     <AppBar position="static" elevation={5} style={{ background: '#f5f5f5' }}>

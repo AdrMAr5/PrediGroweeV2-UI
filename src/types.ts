@@ -20,7 +20,7 @@ type UserData = {
   createdAt: string;
   googleId?: string;
 };
-type UserRole = 'admin' | 'user';
+type UserRole = 'admin' | 'user' | 'teacher';
 
 export type { UserData };
 
