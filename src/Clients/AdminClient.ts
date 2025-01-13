@@ -92,6 +92,14 @@ class AdminClient extends BaseClient {
       throw new Error("Couldn't create parameter: " + err);
     }
   }
+  async updateParametersOrder(updatedParams: Parameter[]) {
+    try {
+      const res = await this.axiosInstance.put('/parameters/order', updatedParams);
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't update parameters order: " + err);
+    }
+  }
 
   async getAllOptions() {
     try {

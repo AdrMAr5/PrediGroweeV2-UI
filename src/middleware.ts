@@ -13,6 +13,9 @@ const checkSession = async (sessionId: string, requestURL: string, adminRequired
     if (!response.ok) {
       return NextResponse.redirect(new URL('/login', requestURL));
     }
+    if (requestURL === '/login' || requestURL === '/register') {
+      return NextResponse.redirect(new URL('/quiz', requestURL));
+    }
     const data = await response.json();
 
     if (adminRequired && data.role !== 'admin') {

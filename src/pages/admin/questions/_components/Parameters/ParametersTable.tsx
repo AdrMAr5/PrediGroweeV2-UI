@@ -11,6 +11,7 @@ import {
   Typography,
   Alert,
   Button,
+  ToggleButton,
 } from '@mui/material';
 import ParametersTableRow from './ParametersTableRow';
 import { Parameter } from '@/types';
@@ -18,27 +19,37 @@ import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL, IMAGES_SERVICE_URL } from '@/Envs';
 import NewParameterRow from './NewParameterRow';
 import ImagesClient from '@/Clients/ImagesClient';
+import DraggableParametersTable from './DraggableParametersTable';
+import { Reorder } from '@mui/icons-material';
 
 const ParametersTable = () => {
   const [parameters, setParameters] = React.useState<Parameter[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [showNewRow, setShowNewRow] = React.useState(false);
+  const [editOrder, setEditOrder] = React.useState(false);
+  // const sortParams = () => {
+  //   const sortedParams = [...parameters].sort((a, b) => {
+  //     return a?.order - b?.order || a?.id - b?.id;
+  //   });
+  //   setParameters(sortedParams);
+  // };
 
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
   const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
 
+  const loadParameters = async () => {
+    try {
+      const data = await adminClient.getAllParameters();
+      setParameters(data);
+      // sortParams();
+    } catch {
+      setError('Failed to load parameters');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   React.useEffect(() => {
-    const loadParameters = async () => {
-      try {
-        const data = await adminClient.getAllParameters();
-        setParameters(data);
-      } catch {
-        setError('Failed to load questions');
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadParameters();
   }, [adminClient]);
 
@@ -49,6 +60,7 @@ const ParametersTable = () => {
         await imagesClient.uploadParamImage(param.id, image);
       }
       setParameters(parameters.map((p) => (p.id === param.id ? param : p)));
+      // sortParams();
     } catch {
       setError('Failed to update parameter');
     }
@@ -58,12 +70,22 @@ const ParametersTable = () => {
     try {
       const newParameter = await adminClient.createParameter(param);
       setParameters([...parameters, newParameter]);
+      // sortParams();
       if (image && newParameter.id) {
         await imagesClient.uploadParamImage(newParameter.id, image);
       }
       setShowNewRow(false);
     } catch {
       setError('Failed to create parameter');
+    }
+  };
+  const handleOrderChange = async (updatedParams: Parameter[]) => {
+    try {
+      await adminClient.updateParametersOrder(updatedParams);
+      setParameters(updatedParams);
+      // sortParams();
+    } catch {
+      setError('Failed to update parameters order');
     }
   };
 
@@ -86,49 +108,67 @@ const ParametersTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell width="75px">
-                <strong>ID</strong>
-              </TableCell>
-              <TableCell width="165px">
-                <strong>Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Description</strong>
-              </TableCell>
-              <TableCell width="115px">
-                <strong>Reference value</strong>
-              </TableCell>
-              {/* <TableCell width="200px">
-                <strong>Image</strong>
-              </TableCell> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {parameters.map((param) => (
-              <ParametersTableRow key={param.id} parameter={param} handleUpdate={handleUpdate} />
-            ))}
-            {showNewRow && (
-              <NewParameterRow onSave={handleCreate} onCancel={() => setShowNewRow(false)} />
-            )}
-            <TableRow>
-              <TableCell colSpan={6}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={() => setShowNewRow(true)}
-                  disabled={showNewRow}
-                >
-                  Add new parameter
-                </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <ToggleButton
+          value="editOrder"
+          selected={editOrder}
+          onChange={() => {
+            if (editOrder) {
+              loadParameters();
+            }
+            setEditOrder(!editOrder);
+          }}
+          sx={{ m: 2 }}
+        >
+          <Reorder /> Edit order
+        </ToggleButton>
+        {editOrder ? (
+          <DraggableParametersTable
+            parameters={parameters}
+            onOrderChange={handleOrderChange}
+            isEditMode={true}
+          />
+        ) : (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell width="75px">
+                  <strong>ID</strong>
+                </TableCell>
+                <TableCell width="165px">
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Description</strong>
+                </TableCell>
+                <TableCell width="115px">
+                  <strong>Reference value</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {parameters.map((param) => (
+                <ParametersTableRow key={param.id} parameter={param} handleUpdate={handleUpdate} />
+              ))}
+              {showNewRow && (
+                <NewParameterRow onSave={handleCreate} onCancel={() => setShowNewRow(false)} />
+              )}
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => setShowNewRow(true)}
+                    disabled={showNewRow}
+                  >
+                    Add new parameter
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        )}
       </TableContainer>
     </>
   );

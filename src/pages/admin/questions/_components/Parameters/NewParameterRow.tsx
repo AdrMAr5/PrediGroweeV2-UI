@@ -13,6 +13,7 @@ const initialState: Omit<Parameter, 'id'> = {
   name: '',
   description: '',
   referenceValues: '',
+  order: 0,
 };
 
 const NewParameterRow: React.FC<NewParameterRowProps> = ({ onSave, onCancel }) => {

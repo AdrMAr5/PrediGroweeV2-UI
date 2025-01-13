@@ -29,6 +29,7 @@ type Parameter = {
   name: string;
   description: string;
   referenceValues: string;
+  order: number;
 };
 type ParameterValue = {
   id: number;
