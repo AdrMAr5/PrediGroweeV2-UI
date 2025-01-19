@@ -23,6 +23,8 @@ import axios from 'axios';
 import ParametersEditor from './ParametersEditor';
 import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
+import { useAuthContext } from '@/components/contexts/AuthContext';
+import ButtonTooltipWrapper from '../ButtonTooltipWrapper';
 
 type QuestionDetailsDialogProps = {
   open: boolean;
@@ -46,6 +48,7 @@ export const QuestionDetailsModal: React.FC<QuestionDetailsDialogProps> = ({
   onUpdate,
   editable = true,
 }) => {
+  const canEdit = useAuthContext().userData.role === 'admin';
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
   const [stats, setStats] = React.useState<QuestionStats | null>(null);
   const [editMode, setEditMode] = React.useState(false);
@@ -121,13 +124,19 @@ export const QuestionDetailsModal: React.FC<QuestionDetailsDialogProps> = ({
         {editable && (
           <Box sx={{ float: 'right' }}>
             {!editMode ? (
-              <IconButton
-                onClick={() => {
-                  setEditMode(true);
-                }}
+              <ButtonTooltipWrapper
+                tooltipText="You are not allowed to edit questions"
+                active={!canEdit}
               >
-                <EditIcon />
-              </IconButton>
+                <IconButton
+                  onClick={() => {
+                    setEditMode(true);
+                  }}
+                  disabled={!canEdit}
+                >
+                  <EditIcon />
+                </IconButton>
+              </ButtonTooltipWrapper>
             ) : (
               <>
                 <IconButton onClick={handleSave} color="primary">

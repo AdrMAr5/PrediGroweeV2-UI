@@ -120,6 +120,9 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
                     </Paper>
                   </Grid2>
                 </Grid2>
+                <Stack my={2}>
+                  <Button onClick={newQuiz}>Start a new quiz</Button>
+                </Stack>
               </CardContent>
             </Card>
           </Grid2>
@@ -143,9 +146,6 @@ const QuizResultsPage = ({ sessionId, newQuiz }: { sessionId: string; newQuiz: (
             </Card>
           </Grid2>
         </Grid2>
-        <Stack my={2}>
-          <Button onClick={newQuiz}>Start a new quiz</Button>
-        </Stack>
       </Box>
     </>
   );

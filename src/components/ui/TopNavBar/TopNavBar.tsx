@@ -83,16 +83,16 @@ export default function TopNavBar() {
                   <ListItemText primary="Admin" />
                 </ListItemButton>
               )}
-              <ListItemButton onClick={isLoggedIn ? logout : () => router.push('/login')}>
-                <ListItemText primary={isLoggedIn ? 'Logout' : 'Login'} />
-              </ListItemButton>
-              <ListItemButton
-                onClick={async () => {
-                  await router.push('/statistics');
-                }}
-              >
-                <ListItemText primary="Statistics" />
-              </ListItemButton>
+
+              {isLoggedIn ? (
+                <ListItemButton
+                  onClick={async () => {
+                    await router.push('/statistics');
+                  }}
+                >
+                  <ListItemText primary="Statistics" />
+                </ListItemButton>
+              ) : null}
               <ListItemButton
                 onClick={async () => {
                   await router.push('/privacy');
@@ -106,6 +106,33 @@ export default function TopNavBar() {
                 }}
               >
                 <ListItemText primary="Contact" />
+              </ListItemButton>
+              <ListItemButton
+                onClick={async () => {
+                  await router.push('/about');
+                }}
+              >
+                <ListItemText primary="About" />
+              </ListItemButton>
+              {isLoggedIn ? (
+                <ListItemButton
+                  onClick={async () => {
+                    await router.push('/account');
+                  }}
+                >
+                  <ListItemText primary="My account" />
+                </ListItemButton>
+              ) : null}
+              <ListItemButton
+                onClick={async () => {
+                  if (isLoggedIn) {
+                    await logout();
+                    await router.push('/');
+                  }
+                  await router.push('/login');
+                }}
+              >
+                <ListItemText primary={isLoggedIn ? 'Logout' : 'Login'} />
               </ListItemButton>
             </List>
           </Box>
@@ -129,7 +156,16 @@ export default function TopNavBar() {
             <Button color="primary">About</Button>
           </Link>
           <Link href={isLoggedIn ? '/quiz' : '/login'}>
-            <Button color="primary">Get Started</Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                if (router.pathname === '/quiz') {
+                  router.reload();
+                }
+              }}
+            >
+              Get Started
+            </Button>
           </Link>
           <Link href="/contact">
             <Button color="primary">Contact</Button>

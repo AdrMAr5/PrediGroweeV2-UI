@@ -24,6 +24,8 @@ import TopNavBar from '@/components/ui/TopNavBar/TopNavBar';
 import UserDetailsModal from '@/components/ui/UserDetailsModal/UserDetailsModal';
 import Link from 'next/link';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ButtonTooltipWrapper from '@/components/ui/ButtonTooltipWrapper';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 const AdminUsersPanel = () => {
   const [users, setUsers] = React.useState<UserData[]>([]);
@@ -32,6 +34,7 @@ const AdminUsersPanel = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [userToDelete, setUserToDelete] = React.useState<string | null>(null);
+  const canEdit = useAuthContext().userData.role === 'admin';
 
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
 
@@ -140,14 +143,20 @@ const AdminUsersPanel = () => {
                       <IconButton onClick={() => handleViewDetails(user.id.toString())}>
                         <InfoIcon />
                       </IconButton>
-                      <IconButton
-                        onClick={() => {
-                          setUserToDelete(user.id.toString());
-                          setDeleteModalOpen(true);
-                        }}
+                      <ButtonTooltipWrapper
+                        tooltipText="You are not allowed to delete users"
+                        active={!canEdit}
                       >
-                        <DeleteIcon color="warning" />
-                      </IconButton>
+                        <IconButton
+                          onClick={() => {
+                            setUserToDelete(user.id.toString());
+                            setDeleteModalOpen(true);
+                          }}
+                          disabled={!canEdit}
+                        >
+                          <DeleteIcon color={canEdit ? 'warning' : 'disabled'} />
+                        </IconButton>
+                      </ButtonTooltipWrapper>
                     </TableCell>
                   </TableRow>
                 ))}

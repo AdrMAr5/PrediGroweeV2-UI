@@ -70,7 +70,6 @@ const ResultDetailsModal = ({
             <TableRow key={index}>
               <TableCell component="th" scope="row" align="left">
                 {param.name}
-                (
                 <InfoTip
                   paramId={param.id}
                   title={param.name}
@@ -78,7 +77,6 @@ const ResultDetailsModal = ({
                   referenceValues={param.referenceValues}
                   imagesClient={imagesClient}
                 />
-                )
               </TableCell>
               <TableCell>{questionDetails?.case?.parametersValues[index].value1}</TableCell>
 

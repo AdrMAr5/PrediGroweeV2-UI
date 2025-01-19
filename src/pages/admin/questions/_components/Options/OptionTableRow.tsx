@@ -6,6 +6,8 @@ import { QuestionOption } from '@/types';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ButtonTooltipWrapper from '@/components/ui/ButtonTooltipWrapper';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 type ParametersTableRowProps = {
   option: QuestionOption;
@@ -17,6 +19,8 @@ const OptionTableRow = ({ option, handleUpdate, handleDelete }: ParametersTableR
   const [updatedParameter, setUpdatedParameter] = React.useState<QuestionOption>(option);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [optionToDelete, setOptionToDelete] = React.useState<string | null>(null);
+  const role = useAuthContext().userData.role;
+  const canEdit = role === 'admin';
 
   if (!option || !option.id) return null;
 
@@ -24,17 +28,22 @@ const OptionTableRow = ({ option, handleUpdate, handleDelete }: ParametersTableR
     <>
       <TableRow key={option.id}>
         <TableCell>
-          <IconButton onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
-          <IconButton
-            onClick={() => {
-              setOptionToDelete(option.id.toString());
-              setDeleteModalOpen(true);
-            }}
-          >
-            <DeleteIcon color="warning" />
-          </IconButton>
+          <ButtonTooltipWrapper tooltipText="You are not allowed to edit options" active={!canEdit}>
+            <IconButton onClick={() => setOpen(!open)} disabled={!canEdit}>
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          </ButtonTooltipWrapper>
+          <ButtonTooltipWrapper tooltipText="You are not allowed to edit options" active={!canEdit}>
+            <IconButton
+              onClick={() => {
+                setOptionToDelete(option.id.toString());
+                setDeleteModalOpen(true);
+              }}
+              disabled={!canEdit}
+            >
+              <DeleteIcon color={canEdit ? 'warning' : 'disabled'} />
+            </IconButton>
+          </ButtonTooltipWrapper>
         </TableCell>
         <TableCell>{option.id}</TableCell>
         <TableCell>{option.option}</TableCell>

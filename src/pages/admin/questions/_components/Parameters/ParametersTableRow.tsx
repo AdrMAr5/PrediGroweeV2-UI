@@ -6,6 +6,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import Image from 'next/image';
 import ImagesClient from '@/Clients/ImagesClient';
 import { IMAGES_SERVICE_URL } from '@/Envs';
+import ButtonTooltipWrapper from '@/components/ui/ButtonTooltipWrapper';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 type ParametersTableRowProps = {
   parameter: Parameter;
@@ -19,6 +21,7 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const imagesClient = React.useMemo(() => new ImagesClient(IMAGES_SERVICE_URL), []);
+  const canEdit = useAuthContext().userData.role === 'admin';
 
   React.useEffect(() => {
     const loadImage = async () => {
@@ -57,9 +60,14 @@ const ParametersTableRow = ({ parameter, handleUpdate }: ParametersTableRowProps
     <>
       <TableRow key={parameter?.id}>
         <TableCell>
-          <IconButton onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+          <ButtonTooltipWrapper
+            tooltipText="You are not allowed to edit parameters"
+            active={!canEdit}
+          >
+            <IconButton onClick={() => setOpen(!open)} disabled={!canEdit}>
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          </ButtonTooltipWrapper>
         </TableCell>
         <TableCell>{parameter.id}</TableCell>
         <TableCell>{parameter.name}</TableCell>

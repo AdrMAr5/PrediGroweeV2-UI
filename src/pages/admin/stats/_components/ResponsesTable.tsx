@@ -95,7 +95,7 @@ const AdminResponsesPanel = () => {
     const csvData = filteredResponses.map((response) => {
       const survey = surveys.find((s) => s.userId?.toString() === response.userId.toString());
       return {
-        'Case ID': response.questionId,
+        'Case ID': response.caseCode,
         'User ID': response.userId,
         Answer: response.answer,
         'Is correct': response.isCorrect ? 'Yes' : 'No',

@@ -21,6 +21,8 @@ import NewParameterRow from './NewParameterRow';
 import ImagesClient from '@/Clients/ImagesClient';
 import DraggableParametersTable from './DraggableParametersTable';
 import { Reorder } from '@mui/icons-material';
+import ButtonTooltipWrapper from '@/components/ui/ButtonTooltipWrapper';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 const ParametersTable = () => {
   const [parameters, setParameters] = React.useState<Parameter[]>([]);
@@ -28,6 +30,8 @@ const ParametersTable = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [showNewRow, setShowNewRow] = React.useState(false);
   const [editOrder, setEditOrder] = React.useState(false);
+  const role = useAuthContext().userData.role;
+  const canEdit = role === 'admin';
   // const sortParams = () => {
   //   const sortedParams = [...parameters].sort((a, b) => {
   //     return a?.order - b?.order || a?.id - b?.id;
@@ -108,19 +112,25 @@ const ParametersTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <ToggleButton
-          value="editOrder"
-          selected={editOrder}
-          onChange={() => {
-            if (editOrder) {
-              loadParameters();
-            }
-            setEditOrder(!editOrder);
-          }}
-          sx={{ m: 2 }}
+        <ButtonTooltipWrapper
+          tooltipText="You are not allowed to edit parameters order"
+          active={!canEdit}
         >
-          <Reorder /> Edit order
-        </ToggleButton>
+          <ToggleButton
+            value="editOrder"
+            selected={editOrder}
+            disabled={!canEdit}
+            onChange={() => {
+              if (editOrder) {
+                loadParameters();
+              }
+              setEditOrder(!editOrder);
+            }}
+            sx={{ m: 2 }}
+          >
+            <Reorder /> Edit order
+          </ToggleButton>
+        </ButtonTooltipWrapper>
         {editOrder ? (
           <DraggableParametersTable
             parameters={parameters}
@@ -155,15 +165,20 @@ const ParametersTable = () => {
               )}
               <TableRow>
                 <TableCell colSpan={6}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={() => setShowNewRow(true)}
-                    disabled={showNewRow}
+                  <ButtonTooltipWrapper
+                    tooltipText="You are not allowed to add new parameters"
+                    active={!canEdit}
                   >
-                    Add new parameter
-                  </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={() => setShowNewRow(true)}
+                      disabled={showNewRow || !canEdit}
+                    >
+                      Add new parameter
+                    </Button>
+                  </ButtonTooltipWrapper>
                 </TableCell>
               </TableRow>
             </TableBody>

@@ -15,8 +15,10 @@ import {
   Typography,
   Grid,
   Divider,
+  Tooltip,
 } from '@mui/material';
 import { UserDetails, UserRole } from '@/types';
+import { useAuthContext } from '@/components/contexts/AuthContext';
 
 const UserDetailsModal: React.FC<{
   open: boolean;
@@ -24,6 +26,7 @@ const UserDetailsModal: React.FC<{
   userDetails: UserDetails | null;
   onRoleChange: (id: number, role: UserRole) => Promise<void>;
 }> = ({ open, onClose, userDetails, onRoleChange }) => {
+  const role = useAuthContext().userData.role;
   const [isUpdating, setIsUpdating] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -157,19 +160,22 @@ const UserDetailsModal: React.FC<{
             <Typography variant="h6" gutterBottom>
               Role Management
             </Typography>
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={userDetails.user.role}
-                label="Role"
-                onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-                disabled={isUpdating}
-              >
-                <MenuItem value="user">User</MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="teacher">Teacher</MenuItem>
-              </Select>
-            </FormControl>
+            <Tooltip title="You are not allowed to change user roles" arrow>
+              <FormControl fullWidth>
+                <InputLabel>Role</InputLabel>
+
+                <Select
+                  value={userDetails.user.role}
+                  label="Role"
+                  onChange={(e) => handleRoleChange(e.target.value as UserRole)}
+                  disabled={isUpdating || role !== 'admin'}
+                >
+                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="teacher">Teacher</MenuItem>
+                </Select>
+              </FormControl>
+            </Tooltip>
             {error && (
               <Alert severity="error" sx={{ mt: 1 }}>
                 {error}

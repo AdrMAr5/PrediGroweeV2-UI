@@ -33,10 +33,13 @@ const SurveyPage = () => {
     acknowledgements: true,
   });
   const [isError, setIsError] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
 
   const handleChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setTouchedFields((prev) => ({ ...prev, [name]: true }));
+
     if (name === 'age') {
       if (parseInt(value) < 1 || parseInt(value) > 120) {
         setIsError(true);
@@ -44,6 +47,14 @@ const SurveyPage = () => {
         setIsError(false);
       }
     }
+  };
+
+  const handleBlur = (fieldName: string) => {
+    setTouchedFields((prev) => ({ ...prev, [fieldName]: true }));
+  };
+
+  const hasError = (fieldName: string): boolean => {
+    return touchedFields[fieldName] && !formData[fieldName as keyof UserSurvey];
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -63,12 +74,18 @@ const SurveyPage = () => {
           <Typography variant="h5" align="center" gutterBottom>
             Survey
           </Typography>
+          <Typography variant="body2" align="center" gutterBottom>
+            Please fill all the fields to continue
+          </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               label="Name:"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              onBlur={() => handleBlur('name')}
+              error={hasError('name')}
+              helperText={hasError('name') ? 'This field is required' : ''}
               fullWidth
               margin="normal"
               placeholder="Name"
@@ -78,6 +95,9 @@ const SurveyPage = () => {
               name="surname"
               value={formData.surname}
               onChange={handleChange}
+              onBlur={() => handleBlur('surname')}
+              error={hasError('surname')}
+              helperText={hasError('surname') ? 'This field is required' : ''}
               fullWidth
               margin="normal"
               placeholder="Surname"
@@ -88,6 +108,9 @@ const SurveyPage = () => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
+              onBlur={() => handleBlur('gender')}
+              error={hasError('gender')}
+              helperText={hasError('gender') ? 'Please select your gender' : ''}
               fullWidth
               margin="normal"
               placeholder="Please select one of the options"
@@ -97,37 +120,42 @@ const SurveyPage = () => {
               <MenuItem value="prefer not to say">Prefer not to say</MenuItem>
             </TextField>
 
-            {/* Age */}
             <TextField
               label="Age:"
               type="number"
               name="age"
               value={formData.age === 0 ? '' : formData.age}
-              error={isError}
+              error={isError || hasError('age')}
+              helperText={hasError('age') ? 'Please enter your age' : ''}
               onChange={handleChange}
+              onBlur={() => handleBlur('age')}
               fullWidth
               margin="normal"
               placeholder="Age"
               inputProps={{ min: 0 }}
             />
 
-            {/* Country of origin */}
             <TextField
               label="Country of origin:"
               name="country"
               value={formData.country}
               onChange={handleChange}
+              onBlur={() => handleBlur('country')}
+              error={hasError('country')}
+              helperText={hasError('country') ? 'Please enter your country' : ''}
               fullWidth
               margin="normal"
             />
 
-            {/* Vision Defect */}
             <TextField
               select
               label="Vision defect:"
               name="visionDefect"
               value={formData.visionDefect}
               onChange={handleChange}
+              onBlur={() => handleBlur('visionDefect')}
+              error={hasError('visionDefect')}
+              helperText={hasError('visionDefect') ? 'Please select your vision status' : ''}
               fullWidth
               margin="normal"
               placeholder="Please select one of the options"
@@ -144,13 +172,15 @@ const SurveyPage = () => {
               <MenuItem value="I prefer not to say">I prefer not to say</MenuItem>
             </TextField>
 
-            {/* Education */}
             <TextField
               select
               label="Education:"
               name="education"
               value={formData.education}
               onChange={handleChange}
+              onBlur={() => handleBlur('education')}
+              error={hasError('education')}
+              helperText={hasError('education') ? 'Please select your education level' : ''}
               fullWidth
               margin="normal"
               placeholder="Please select one of the options"
@@ -165,13 +195,15 @@ const SurveyPage = () => {
               <MenuItem value="Other">Other</MenuItem>
             </TextField>
 
-            {/* Experience with cephalometric analysis */}
             <TextField
               select
               label="Experience with cephalometric analysis:"
               name="experience"
               value={formData.experience}
               onChange={handleChange}
+              onBlur={() => handleBlur('experience')}
+              error={hasError('experience')}
+              helperText={hasError('experience') ? 'Please select your experience level' : ''}
               fullWidth
               margin="normal"
               placeholder="Please select one of the options"
@@ -183,7 +215,6 @@ const SurveyPage = () => {
               <MenuItem value="More than 10 years">More than 10 years</MenuItem>
             </TextField>
 
-            {/* Acknowledgement */}
             <FormControl component="fieldset" margin="normal">
               <FormLabel component="legend">
                 Would you like to be included in acknowledgements of our future papers?
