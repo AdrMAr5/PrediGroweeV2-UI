@@ -37,18 +37,21 @@ const QuizPage = ({
   nextStep,
   sessionId,
   mode,
+  timeLimit,
 }: {
   nextStep: () => void;
   sessionId: string;
   mode: QuizMode;
+  timeLimit?: number;
 }) => {
+  const questionTimeout = timeLimit || QUESTION_TIMEOUT;
   const [growthDirection, setGrowthDirection] = React.useState('');
   const [questionData, setQuestionData] = React.useState<QuestionData>();
   const [questionLoading, setQuestionLoading] = React.useState(true);
   const [showCorrect, setShowCorrect] = React.useState(false);
   const [correctAnswer, setCorrectAnswer] = React.useState<string>('');
   const [imageNumber, setImageNumber] = React.useState<number>(0);
-  const [timeLeft, setTimeLeft] = React.useState(QUESTION_TIMEOUT);
+  const [timeLeft, setTimeLeft] = React.useState(questionTimeout);
   const { quizClient } = useQuizContext();
   const theme = useTheme();
   const notLarge = useMediaQuery(theme.breakpoints.down('lg'));
@@ -86,12 +89,12 @@ const QuizPage = ({
       }
       setQuestionData(data);
       if (mode === 'time_limited') {
-        setTimeLeft(QUESTION_TIMEOUT);
+        setTimeLeft(questionTimeout);
       }
     } catch (error) {
       console.error(error);
     }
-  }, [quizClient, sessionId, mode]);
+  }, [quizClient, sessionId, mode, questionTimeout]);
 
   const handleClickNext = async () => {
     if (growthDirection === '' && mode !== 'educational' && mode !== 'time_limited') {
@@ -164,7 +167,7 @@ const QuizPage = ({
         setTimeLeft((prev) => {
           if (prev <= 1) {
             handleClickNext();
-            return QUESTION_TIMEOUT;
+            return questionTimeout;
           }
           return prev - 1;
         });
@@ -185,7 +188,7 @@ const QuizPage = ({
     if (mode !== 'time_limited') return null;
     return (
       <Box sx={{ width: '100%', mb: 2 }}>
-        <LinearProgress variant="determinate" value={(timeLeft / QUESTION_TIMEOUT) * 100} />
+        <LinearProgress variant="determinate" value={(timeLeft / questionTimeout) * 100} />
         <Typography variant="body2" color="text.secondary" align="center">
           Time left: {timeLeft}s
         </Typography>

@@ -11,34 +11,61 @@ import {
   TableHead,
   TableRow,
   Typography,
+  TextField,
 } from '@mui/material';
 import { QuestionOption } from '@/types';
 import AdminClient from '@/Clients/AdminClient';
 import { ADMIN_SERVICE_URL } from '@/Envs';
 import OptionTableRow from './OptionTableRow';
 import NewOptionRow from './NewOptionRow';
+import { useAuthContext } from '@/components/contexts/AuthContext';
+import ButtonTooltipWrapper from '@/components/ui/ButtonTooltipWrapper';
 
 const OptionsManagement = () => {
   const [options, setOptions] = React.useState<QuestionOption[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [showNewRow, setShowNewRow] = React.useState(false);
+  const [timeLimitValue, setTimeLimitValue] = React.useState('30');
+  const role = useAuthContext().userData.role;
+  const canEdit = role === 'admin';
 
   const adminClient = React.useMemo(() => new AdminClient(ADMIN_SERVICE_URL), []);
 
   React.useEffect(() => {
-    const loadOptions = async () => {
+    const loadData = async () => {
       try {
-        const data = await adminClient.getAllOptions();
-        setOptions(data);
+        const [optionsData, settingsData] = await Promise.all([
+          adminClient.getAllOptions(),
+          adminClient.getSettings(),
+        ]);
+        setOptions(optionsData);
+        const timeLimit = settingsData.find((s) => s.name === 'time_limit');
+        if (timeLimit) {
+          setTimeLimitValue(timeLimit.value);
+        }
       } catch {
-        setError('Failed to load questions');
+        setError('Failed to load data');
       } finally {
         setIsLoading(false);
       }
     };
-    loadOptions();
+    loadData();
   }, [adminClient]);
+
+  const handleUpdateSettings = async () => {
+    try {
+      await adminClient.updateSettings([
+        {
+          name: 'time_limit',
+          value: timeLimitValue,
+        },
+      ]);
+    } catch {
+      setError('Failed to update settings');
+    }
+  };
+
   const handleUpdate = async (option: QuestionOption) => {
     try {
       await adminClient.updateOption(option.id.toString(), option);
@@ -47,6 +74,7 @@ const OptionsManagement = () => {
       setError('Failed to update parameter');
     }
   };
+
   const handleCreate = async (option: Omit<QuestionOption, 'id'>) => {
     try {
       const newOption = await adminClient.createOption(option);
@@ -56,6 +84,7 @@ const OptionsManagement = () => {
       setError('Failed to create parameter');
     }
   };
+
   const handleDelete = async (id: string) => {
     try {
       await adminClient.deleteOption(id);
@@ -72,6 +101,7 @@ const OptionsManagement = () => {
       </Box>
     );
   }
+
   if (error) {
     return (
       <Alert severity="error" sx={{ m: 2 }}>
@@ -82,6 +112,30 @@ const OptionsManagement = () => {
 
   return (
     <>
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Settings
+        </Typography>
+        <Box display="flex" gap={2} alignItems="center">
+          <TextField
+            label="Time Limit (Time limited mode)"
+            type="number"
+            value={timeLimitValue}
+            onChange={(e) => setTimeLimitValue(e.target.value)}
+            size="small"
+            disabled={!canEdit}
+          />
+          <ButtonTooltipWrapper
+            tooltipText="You are not allowed to edit settings"
+            active={!canEdit}
+          >
+            <Button variant="contained" onClick={handleUpdateSettings} disabled={!canEdit}>
+              Save Settings
+            </Button>
+          </ButtonTooltipWrapper>
+        </Box>
+      </Paper>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -129,4 +183,5 @@ const OptionsManagement = () => {
     </>
   );
 };
+
 export default OptionsManagement;

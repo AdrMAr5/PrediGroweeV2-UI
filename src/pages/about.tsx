@@ -28,81 +28,47 @@ import ImagesClient from '@/Clients/ImagesClient';
 import QuizClient from '@/Clients/QuizClient';
 import Image from 'next/image';
 import theme from '@/theme';
+import axios from 'axios';
 
-const faqContent = [
-  {
-    title: 'What is the Predigrowee app?',
-    content: `The Predigrowee app is a project created by orthodontists and IT specialists focusing on the human ability to predict facial growth on the basis of cephalometric X-rays. Our goal is to compare how well human experts are able to predict facial growth in comparison to artificial intelligence.`,
-  },
-  {
-    title: 'Why do we want to try to predict facial growth?',
-    content: `The facial growth direction, amount, and timing are one of crucial pieces of information in many fields, such as orthodontics, pediatrics, criminology, or history. But let's focus on orthodontics. With the knowledge about facial growth prediction, orthodontists may create a successful treatment plan and implement early treatment in patients who need interceptive growth modifications or postpone treatment in patients who do not need it. The growth of the face can be estimated using different methods such as anthropometric measurements, measurements on cephalometric X-ray, CBCT, etc.`,
-  },
-  {
-    title: 'What is the source of the cephalometric X-rays?',
-    content: `In this project, we focused on cephalometric X-rays from AAOF Craniofacial Growth Legacy Collection.<br><br>
-    Collections included: Bolton-Brush, Burlington, Denver, Fels Longitudinal, Forsyth Twin, Iowa, Mathews, Michigan, Oregon.<br><br>
-    Please find more detailed information about the source of the X-rays here: <a href="https://www.aaoflegacycollection.org/aaof_home.html">AAOF Legacy Collection</a>`,
-  },
-  {
-    title: 'How many cases are there?',
-    content: `There are 453 cases.<br><br>From the AAOF Craniofacial Growth Legacy Collection, we chose only those patients who had X-rays around the age of 9 (before the pubertal growth spurt), 12 (close to the pubertal growth spurt), and 18 (after the pubertal growth spurt).<br><br>We excluded patients who underwent orthodontic treatment – based on braces seen on the X-rays – or if the X-rays were unclear.`,
-  },
-  {
-    title: 'What are the types of facial growth?',
-    content: `The type of facial growth, i.e., its direction, intensity, and duration, can be favorable, neutral, or unfavorable when viewed from the clinical perspective. Favorable (horizontal) face growth takes place when elements of the face grow in a direction or with intensity promoting advantageous treatment outcome, while unfavorable (vertical) growth occurs when growth characteristics do not facilitate treatment.`,
-  },
-  {
-    title: 'What task do I have in this app?',
-    content: `In this application, we ask you to try to predict facial growth on the basis of the cephalometric X-rays and some cephalometric measurements and decide whether the growth is vertical, horizontal or normal.`,
-  },
-];
-
-const publications = [
-  {
-    authors:
-      'Kaźmierczak, S., Juszka, Z., Vandevska-Radunovic, V., Maal, T.J.J., Fudalej, P., Mańdziuk, J.',
-    year: '2021',
-    title: 'Prediction of the Facial Growth Direction is Challenging',
-    publication:
-      'Neural Information Processing. ICONIP 2021. Communications in Computer and Information Science, vol 1517. Springer, Cham',
-    doi: 'https://doi.org/10.1007/978-3-030-92310-5_77',
-  },
-  {
-    authors:
-      'Kaźmierczak, S., Juszka, Z., Grzeszczuk, R., Kurdziel, M., Vandevska-Radunovic, V., Fudalej, P., & Mańdziuk, J.',
-    year: '2023',
-    title: 'Prediction of the facial growth direction: Regression perspective',
-    publication: 'Communications in Computer and Information Science (pp. 395–407)',
-    doi: 'https://doi.org/10.1007/978-981-99-1648-1_33',
-  },
-];
-
-const team = {
-  coordinator: {
-    role: 'Project coordinator',
-    name: 'Dawid Juszka, PhD PhD',
-    affiliation: 'AGH University of Krakow, Kraków, Poland',
-  },
-  support: [
-    {
-      name: 'Zofia Juszka, DDS',
-      affiliation: "Prof. Loster's Orthodontics, Kraków, Poland",
-    },
-    {
-      name: 'Prof. dr hab. n. med. Piotr Fudalej',
-      affiliation:
-        'Jagiellonian University Medical College in Krakow, Kraków, Poland; University of Bern, Bern, Switzerland; Palacký University Olomouc, Olomouc, Czech Republic',
-    },
-  ],
-  developer: {
-    role: 'Web Developer',
-    name: 'Adrian Markowski',
-    affiliation: 'Cybersecurity Student, AGH University of Krakow, Kraków, Poland',
-  },
+type AboutContent = {
+  introduction: {
+    title: string;
+    content: string;
+  };
+  publications: {
+    authors: string;
+    year: string;
+    title: string;
+    publication: string;
+    doi: string;
+  }[];
+  faq: {
+    title: string;
+    content: string;
+  }[];
+  team: {
+    coordinator: {
+      role: string;
+      name: string;
+      affiliation: string;
+    };
+    support: {
+      name: string;
+      affiliation: string;
+    }[];
+    developer: {
+      role: string;
+      name: string;
+      affiliation: string;
+    };
+  };
 };
 
-export default function About() {
+type AboutProps = {
+  content: AboutContent;
+};
+
+export default function About({ content }: AboutProps) {
   const [parameters, setParameters] = React.useState<Parameter[]>([]);
   const [images, setImages] = React.useState<Record<number, string>>({});
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
@@ -140,6 +106,7 @@ export default function About() {
     },
     [imagesClient]
   );
+
   React.useEffect(() => {
     if (parameters.length > 0) {
       parameters.forEach(async (param) => {
@@ -156,18 +123,18 @@ export default function About() {
         {/* Introduction Section */}
         <Paper elevation={3} sx={{ p: 4, mb: 6 }}>
           <Typography variant="h3" component="h1" gutterBottom>
-            About Predigrowee
+            {content.introduction.title}
           </Typography>
           <Typography variant="body1" paragraph>
-            The Predigrowee app is a project created by orthodontists and IT specialists focusing on
-            the human ability to predict facial growth on the basis of cephalometric X-rays. This is
-            the second version of the project - Predigrowee 2.0 which extends application features.
+            {content.introduction.content}
           </Typography>
 
-          <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-            Publications
-          </Typography>
-          {publications.map((pub, index) => (
+          {!!content?.publications && (
+            <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+              Publications
+            </Typography>
+          )}
+          {content?.publications?.map((pub, index) => (
             <Box key={index} sx={{ mb: 3 }}>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 {pub.authors} ({pub.year}). <em>{pub.title}</em>. {pub.publication}.
@@ -184,7 +151,7 @@ export default function About() {
           <Typography variant="h4" gutterBottom>
             Frequently Asked Questions
           </Typography>
-          {faqContent.map((faq, index) => (
+          {content.faq.map((faq, index) => (
             <Accordion key={index} sx={{ mb: 2 }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography variant="h6">{faq.title}</Typography>
@@ -207,17 +174,17 @@ export default function About() {
 
           <Box sx={{ mb: 4 }}>
             <Typography variant="h6" gutterBottom>
-              {team.coordinator.role}
+              {content.team.coordinator.role}
             </Typography>
-            <Typography>{team.coordinator.name}</Typography>
-            <Typography color="text.secondary">{team.coordinator.affiliation}</Typography>
+            <Typography>{content.team.coordinator.name}</Typography>
+            <Typography color="text.secondary">{content.team.coordinator.affiliation}</Typography>
           </Box>
 
           <Box sx={{ mb: 4 }}>
             <Typography variant="h6" gutterBottom>
               Content and substantive support
             </Typography>
-            {team.support.map((member, index) => (
+            {content.team.support.map((member, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <Typography>{member.name}</Typography>
                 <Typography color="text.secondary">{member.affiliation}</Typography>
@@ -227,10 +194,10 @@ export default function About() {
 
           <Box>
             <Typography variant="h6" gutterBottom>
-              {team.developer.role}
+              {content.team.developer.role}
             </Typography>
-            <Typography>{team.developer.name}</Typography>
-            <Typography color="text.secondary">{team.developer.affiliation}</Typography>
+            <Typography>{content.team.developer.name}</Typography>
+            <Typography color="text.secondary">{content.team.developer.affiliation}</Typography>
           </Box>
         </Paper>
 
@@ -358,4 +325,17 @@ export default function About() {
       </Container>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const res = await axios.get(`http://frontend:3000/api/content/about`, {
+    withCredentials: true,
+  });
+  const { content } = res.data;
+
+  return {
+    props: {
+      content,
+    },
+  };
 }

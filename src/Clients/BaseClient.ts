@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import useRouterPush from '@/components/useRouterPush';
 import applyCaseMiddleware from 'axios-case-converter';
 import { AUTH_SERVICE_URL } from '@/Envs';
+import { toast } from 'react-toastify';
 
 class BaseClient {
   protected axiosInstance: AxiosInstance;
@@ -22,10 +23,37 @@ class BaseClient {
       return config;
     });
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        if (
+          ['POST', 'PATCH', 'PUT', 'DELETE'].includes(
+            response.config.method?.toUpperCase() ?? ''
+          ) &&
+          response.status < 300 &&
+          response.status >= 200 &&
+          response.config.baseURL?.includes('/admin')
+        ) {
+          toast.success('Operation successful');
+        }
+        return response;
+      },
       async (error) => {
+        if (
+          ['POST', 'PATCH', 'PUT', 'DELETE'].includes(
+            error.response.config.method?.toUpperCase() ?? ''
+          ) &&
+          error.response.config.baseURL?.includes('/admin')
+        ) {
+          toast.error(error.response?.data?.message || 'Operation failed');
+        }
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (['login', 'register'].some((path) => originalRequest.url?.includes(path))) {
+          toast.error(error.response?.data || 'Operation failed');
+        }
+        if (
+          error.response.status === 401 &&
+          !originalRequest._retry &&
+          !['login', 'register'].some((path) => originalRequest.url?.includes(path))
+        ) {
           originalRequest._retry = true;
           try {
             const response = await axios.post(
@@ -46,10 +74,6 @@ class BaseClient {
         }
         return Promise.reject(error);
       }
-    );
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      (error) => Promise.reject(error.response.data.err)
     );
   }
   async refreshToken() {

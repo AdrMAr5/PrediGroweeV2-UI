@@ -103,6 +103,7 @@ type QuizState = {
   sessionId: string;
   step: 'start' | 'quiz' | 'results';
   mode: QuizMode;
+  timeLimit?: number;
 };
 
 type UserDetails = {
@@ -155,6 +156,10 @@ type SurveyGroupedStats = {
   total: number;
   correct: number;
   accuracy: number;
+};
+export type Settings = {
+  name: string;
+  value: string;
 };
 
 export type {

@@ -3,6 +3,7 @@ import {
   Parameter,
   QuestionData,
   QuestionOption,
+  Settings,
   SurveyGroupedStats,
   UserData,
   UserSurvey,
@@ -259,6 +260,22 @@ class AdminClient extends BaseClient {
       return res.data;
     } catch (err) {
       throw new Error("Couldn't fetch users stats: " + err);
+    }
+  }
+  async getSettings(): Promise<Settings[]> {
+    try {
+      const res = await this.axiosInstance.get('/settings');
+      return res.data;
+    } catch (err) {
+      throw new Error("Couldn't fetch settings: " + err);
+    }
+  }
+
+  async updateSettings(settings: Settings[]): Promise<void> {
+    try {
+      await this.axiosInstance.patch('/settings', settings);
+    } catch (err) {
+      throw new Error("Couldn't update settings: " + err);
     }
   }
 }

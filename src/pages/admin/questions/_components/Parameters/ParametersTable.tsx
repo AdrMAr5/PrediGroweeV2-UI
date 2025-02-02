@@ -128,7 +128,7 @@ const ParametersTable = () => {
             }}
             sx={{ m: 2 }}
           >
-            <Reorder /> Edit order
+            <Reorder /> {editOrder ? 'Stop edit order mode' : 'Start edit order mode'}
           </ToggleButton>
         </ButtonTooltipWrapper>
         {editOrder ? (

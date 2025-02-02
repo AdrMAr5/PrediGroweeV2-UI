@@ -35,7 +35,7 @@ const validationSchema = Yup.object().shape({
 export default function StartQuiz({
   nextStep,
 }: {
-  nextStep: (sessionId: string, mode: QuizMode) => void;
+  nextStep: (sessionId: string, mode: QuizMode, timeLimit?: number) => void;
 }) {
   const router = useRouter();
   const { quizClient } = useQuizContext();
@@ -49,7 +49,7 @@ export default function StartQuiz({
     setSubmitting(true);
     try {
       const data = await quizClient.startQuiz(values.mode, window.innerWidth, window.innerHeight);
-      nextStep(data.session.sessionId, data.session.quizMode);
+      nextStep(data.session.sessionId, data.session.quizMode, data?.timeLimit);
     } catch {
       alert('Failed to start quiz');
     } finally {

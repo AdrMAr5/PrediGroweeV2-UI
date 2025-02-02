@@ -15,10 +15,10 @@ import {
   Typography,
   Grid,
   Divider,
-  Tooltip,
 } from '@mui/material';
 import { UserDetails, UserRole } from '@/types';
 import { useAuthContext } from '@/components/contexts/AuthContext';
+import ButtonTooltipWrapper from '../ButtonTooltipWrapper';
 
 const UserDetailsModal: React.FC<{
   open: boolean;
@@ -160,7 +160,10 @@ const UserDetailsModal: React.FC<{
             <Typography variant="h6" gutterBottom>
               Role Management
             </Typography>
-            <Tooltip title="You are not allowed to change user roles" arrow>
+            <ButtonTooltipWrapper
+              tooltipText="You are not allowed to change roles"
+              active={role !== 'admin'}
+            >
               <FormControl fullWidth>
                 <InputLabel>Role</InputLabel>
 
@@ -175,7 +178,7 @@ const UserDetailsModal: React.FC<{
                   <MenuItem value="teacher">Teacher</MenuItem>
                 </Select>
               </FormControl>
-            </Tooltip>
+            </ButtonTooltipWrapper>
             {error && (
               <Alert severity="error" sx={{ mt: 1 }}>
                 {error}

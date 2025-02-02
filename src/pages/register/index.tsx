@@ -44,9 +44,8 @@ export default function Register() {
         } else {
           await router.push('/quiz');
         }
-      } catch {
-        console.log('Google login failed');
-      }
+        // eslint-disable-next-line no-empty
+      } catch {}
     },
     onError: () => console.log('Google Login failed:'),
   });

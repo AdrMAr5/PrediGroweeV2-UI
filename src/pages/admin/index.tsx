@@ -113,7 +113,7 @@ const AdminPage = () => {
               </Card>
             </Stack>
           </Grid2>
-          <Grid2 size={4}>
+          <Grid2 size={6}>
             <Card sx={{ height: 'auto' }}>
               <CardHeader title="Questions" />
               <CardContent>
@@ -131,36 +131,16 @@ const AdminPage = () => {
               </CardContent>
             </Card>
           </Grid2>
-          <Grid2 size={4}>
+          <Grid2 size={6}>
             <Card>
-              <CardHeader title="Surveys" />
+              <CardHeader title="Site content" />
               <CardContent>
-                <Typography>
-                  Active surveys: <strong>{summary?.quizSummary?.activeSurveys}</strong>
-                </Typography>
-                <Button
-                  LinkComponent={Link}
-                  href="/admin/surveys"
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  disabled
-                >
-                  Show all surveys
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid2>
-          <Grid2 size={4}>
-            <Card>
-              <CardHeader title="Site contents" />
-              <CardContent>
-                <Typography>Manage Contact, Privacy, About Pages</Typography>
+                <Typography>Manage about, contact and privacy pages</Typography>
                 <Button
                   LinkComponent={Link}
                   href="/admin/content"
                   variant="contained"
                   sx={{ mt: 2 }}
-                  disabled
                 >
                   Manage
                 </Button>

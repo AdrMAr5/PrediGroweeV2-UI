@@ -37,11 +37,26 @@ export async function middleware(request: NextRequest) {
   // Define which paths require authentication
   const authRequiredPaths = ['/quiz', '/account', '/quiz', '/statistics'];
   const adminPaths = ['/admin'];
+  const apiPaths = ['/api/'];
   if (
     !authRequiredPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
-    !adminPaths.some((path) => request.nextUrl.pathname.startsWith(path))
+    !adminPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
+    !apiPaths.some((path) => request.nextUrl.pathname.startsWith(path))
   ) {
     return NextResponse.next();
+  }
+  if (
+    apiPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
+    request.method === 'GET'
+  ) {
+    return NextResponse.next();
+  }
+  if (
+    apiPaths.some((path) => request.nextUrl.pathname.startsWith(path)) &&
+    request.method === 'POST' &&
+    !sessionId
+  ) {
+    return new Response('Unauthorized', { status: 401 });
   }
   if (!sessionId) {
     return NextResponse.redirect(new URL('/login', request.url));
@@ -54,5 +69,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

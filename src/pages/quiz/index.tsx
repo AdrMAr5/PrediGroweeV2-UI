@@ -9,13 +9,14 @@ const QuizIndexPage = () => {
     step: 'start',
     sessionId: '',
     mode: 'educational',
+    timeLimit: undefined,
   });
   switch (quizState.step) {
     case 'start':
       return (
         <StartQuiz
-          nextStep={(sessionId: string, mode) => {
-            setQuizState({ step: 'quiz', sessionId: sessionId, mode: mode });
+          nextStep={(sessionId: string, mode, timeLimit?: number) => {
+            setQuizState({ step: 'quiz', sessionId: sessionId, mode: mode, timeLimit: timeLimit });
           }}
         />
       );
@@ -24,6 +25,7 @@ const QuizIndexPage = () => {
         <QuizPage
           sessionId={quizState.sessionId}
           mode={quizState.mode}
+          timeLimit={quizState?.timeLimit}
           nextStep={() => {
             setQuizState((state) => ({ ...state, step: 'results' }));
           }}
@@ -41,8 +43,8 @@ const QuizIndexPage = () => {
     default:
       return (
         <StartQuiz
-          nextStep={(sessionId: string, mode) => {
-            setQuizState({ step: 'quiz', sessionId: sessionId, mode: mode });
+          nextStep={(sessionId: string, mode, timeLimit?: number) => {
+            setQuizState({ step: 'quiz', sessionId: sessionId, mode: mode, timeLimit: timeLimit });
           }}
         />
       );

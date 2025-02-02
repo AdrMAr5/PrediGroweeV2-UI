@@ -7,6 +7,8 @@ import theme from '../theme';
 import { AuthContextProvider } from '@/components/contexts/AuthContext';
 import { QuizContextProvider } from '@/components/contexts/QuizContext';
 import { AppProps } from 'next/app';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const quizPaths = ['/quiz', '/quiz/[sessionId]'];
 
@@ -26,9 +28,13 @@ export default function MyApp({ Component, pageProps, router }: AppProps) {
           {isQuizPage ? (
             <QuizContextProvider>
               <Component {...pageProps} />
+              <ToastContainer />
             </QuizContextProvider>
           ) : (
-            <Component {...pageProps} />
+            <>
+              <Component {...pageProps} />
+              <ToastContainer />
+            </>
           )}
         </AuthContextProvider>
       </ThemeProvider>
