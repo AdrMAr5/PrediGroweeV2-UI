@@ -80,7 +80,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData({ userId: null, role: null });
   };
   return (
-    <GoogleOAuthProvider clientId="711820824033-s1vvhg02269re31p02bs3snvk3lsnl3a.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="980769859939-e5vteq05sr2koohfdluvbj5r5j6mb3d7.apps.googleusercontent.com">
       <AuthContext.Provider
         value={{
           userData,
